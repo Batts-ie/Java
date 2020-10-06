@@ -12,7 +12,7 @@ public class WebRequest {
     public void getWebRequest(){
         
         HttpURLConnection connection = null;
-        HttpClient client = HttpClient.newHttpClient();
+        //HttpClient client = HttpClient.newHttpClient();
         try {
             URL url = new URL(_requestString);
             connection =(HttpURLConnection) url.openConnection();
