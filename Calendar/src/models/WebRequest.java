@@ -3,12 +3,14 @@ package models;
 import java.io.DataOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.http.HttpClient;
 
 public class WebRequest {
     String _requestString = "https://deutsche-feiertage-api.de/api/v1";
     public void getWebRequest(){
         
         HttpURLConnection connection = null;
+        HttpClient client = HttpClient.newHttpClient();
         try {
             URL url = new URL(_requestString);
             connection =(HttpURLConnection) url.openConnection();
