@@ -9,7 +9,7 @@ public class Searcher {
     
     public int _monday, _tuesday, _wednesday, _thursday, _friday;
 
-    public void Searching(ArrayList listing)
+    public void searcher(ArrayList listing)
     {
         for (int i = 0; i < listing.size(); i++) 
         {
