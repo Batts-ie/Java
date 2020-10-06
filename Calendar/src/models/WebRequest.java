@@ -1,6 +1,8 @@
 package models;
 
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.http.HttpClient;
@@ -16,13 +18,20 @@ public class WebRequest {
             connection =(HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setUseCaches(false);
+            connection.setRequestProperty("Content-Type", "application/json; uft-8");
+            connection.setRequestProperty("X-DFA-Token", "dfa");
+            connection.setRequestProperty("Accept", "application/json");
             connection.setDoOutput(true);
-            connection.setRequestProperty("", "X-DFA-Token: dfa");
-
-            // sending a request
-            DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
-            dos.writeBytes(null);
-            dos.close();
+            // sending request
+            try (BufferedReader br = new BufferedReader(
+                new InputStreamReader(connection.getInputStream(), "utf-8"))) {
+                    StringBuilder response = new StringBuilder();
+                    String responseLine = null;
+                    while((responseLine = br.readLine()) != null){
+                        response.append(responseLine.trim());
+                    }
+                    System.out.println(response.toString());
+                }
 
         } catch (Exception e) {
             System.out.println("Der requestString kann entweder nicht gefunden werden, oder nicht geöffnet werden");
