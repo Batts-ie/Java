@@ -1,11 +1,11 @@
 package models;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.http.HttpClient;
+
+import org.JSONObject.*;
 
 public class WebRequest {
     String _requestString = "https://deutsche-feiertage-api.de/api/v1";
@@ -15,7 +15,7 @@ public class WebRequest {
         //HttpClient client = HttpClient.newHttpClient();
         try {
             URL url = new URL(_requestString);
-            connection =(HttpURLConnection) url.openConnection();
+            connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setUseCaches(false);
             connection.setRequestProperty("Content-Type", "application/json; uft-8");
@@ -31,6 +31,7 @@ public class WebRequest {
                         response.append(responseLine.trim());
                     }
                     System.out.println(response.toString());
+                    JSONObject = new JSONObject(response.toString());
                 }
 
         } catch (Exception e) {
