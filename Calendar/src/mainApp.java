@@ -1,12 +1,17 @@
-import models.*;
 
 public class mainApp {
     public static void main(String[] args){
-            menuApp.welcomeScreen();
-            menuApp.ThreadSleeping(2000);
+
+
+        Searcher searcher = new Searcher();
+        Handler handler = new Handler();    
+        String url ="https://deutsche-feiertage-api.de/api/v1"; 
+        WebRequest webRequest = new WebRequest(url);
+        menuApp.welcomeScreen();
+        menuApp.ThreadSleeping(2000);
             
 
-            char c = menuApp.menuPool();
+        char c = menuApp.menuPool();
 
             switch (c) {
                 case 'x':
@@ -14,7 +19,7 @@ public class mainApp {
                     System.exit(0);
                     break;
                 case 'y':
-                // Code here
+                // searcher.searcher(handler.dateList(WebRequest.getFeiertagObject()));
                 break;
                 default:
                 System.out.println("Programm schließt nun, da sie eine falsche Taste gedrückt haben!");
