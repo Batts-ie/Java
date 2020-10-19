@@ -1,6 +1,7 @@
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
+
 public class Searcher{
     public int _monday;
     public int _tuesday;

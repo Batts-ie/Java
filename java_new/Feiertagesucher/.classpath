@@ -8,4 +8,5 @@
   <classpathentry kind="src" path="src"/>
   <classpathentry kind="output" path="bin"/>
   <classpathentry kind="lib" path="lib/java-json.jar"/>
+  <classpathentry kind="lib" path="lib/mssql-jdbc-8.4.1.jre14.jar"/>
 </classpath>
