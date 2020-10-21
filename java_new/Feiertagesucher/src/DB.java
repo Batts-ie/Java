@@ -24,8 +24,8 @@ public class DB{
         }
         try {
                conn = DriverManager.getConnection("jdbc:mysql://"+hostname+"/"+"?user="+userName+"&password="+password+"&serverTimezone=UTC");
-               Statement myStat = conn.createStatement();
-               ResultSet rS=myStat.executeQuery("Select * from kalender");
+               Statement statement = conn.createStatement();
+               ResultSet rS=statement.executeQuery("Select * from kalender");
                System.out.println("Zeit                                 Montag      Dienstag        Mittwoch        Donnerstag      Freitag     Samstag" +
                        "       Sonntag         Startjahr       Endjahr");
                while(rS.next()){
