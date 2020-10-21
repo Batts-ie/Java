@@ -3,5 +3,6 @@ public class mainApp {
         Options options = new Options();
         welcomeScreen.welcomeOurGuest();
         options.Startup();
+        DB.Connection();
     }
 }
