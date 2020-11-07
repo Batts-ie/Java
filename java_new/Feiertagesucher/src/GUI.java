@@ -1,4 +1,4 @@
-/*import javafx.application.Application; 
+import javafx.application.Application;
 import javafx.scene.Group; 
 import javafx.scene.Scene; 
 import javafx.scene.shape.Line; 
@@ -8,8 +8,7 @@ public class GUI extends Application{
    @Override 
    public void start(Stage stage) { 
       //Creating a line object 
-      Line line = new Line(); 
-         
+      Line line = new Line();
       //Setting the properties to a line 
       line.setStartX(100.0); 
       line.setStartY(150.0); 
@@ -32,6 +31,6 @@ public class GUI extends Application{
       stage.show(); 
    }      
    public static void main(String args[]){ 
-      launch(args); 
+      launch(args);
    } 
-} */
+}

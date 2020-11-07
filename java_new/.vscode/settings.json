@@ -1,6 +1,14 @@
 {
     "java.project.referencedLibraries": [
         "lib/**/*.jar",
-        "Feiertagesucher/lib/java-json.jar"
+        "Feiertagesucher/lib/java-json.jar",
+        "c:\\Users\\Michael Perktold\\Desktop\\Schule\\4AHWII\\SWP Java\\javafx-sdk-15\\lib\\javafx.base.jar",
+        "c:\\Users\\Michael Perktold\\Desktop\\Schule\\4AHWII\\SWP Java\\javafx-sdk-15\\lib\\javafx.controls.jar",
+        "c:\\Users\\Michael Perktold\\Desktop\\Schule\\4AHWII\\SWP Java\\javafx-sdk-15\\lib\\javafx.fxml.jar",
+        "c:\\Users\\Michael Perktold\\Desktop\\Schule\\4AHWII\\SWP Java\\javafx-sdk-15\\lib\\javafx.graphics.jar",
+        "c:\\Users\\Michael Perktold\\Desktop\\Schule\\4AHWII\\SWP Java\\javafx-sdk-15\\lib\\javafx.media.jar",
+        "c:\\Users\\Michael Perktold\\Desktop\\Schule\\4AHWII\\SWP Java\\javafx-sdk-15\\lib\\javafx.swing.jar",
+        "c:\\Users\\Michael Perktold\\Desktop\\Schule\\4AHWII\\SWP Java\\javafx-sdk-15\\lib\\javafx.web.jar",
+        "c:\\Users\\Michael Perktold\\Desktop\\Schule\\4AHWII\\SWP Java\\javafx-sdk-15\\lib\\javafx-swt.jar"
     ]
 }
