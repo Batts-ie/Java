@@ -8,3 +8,4 @@ Gets all holidays from Austria on a user preferenced amount of time and puts the
 ![ask](https://user-images.githubusercontent.com/56489878/99804224-f432ce80-2b3a-11eb-87ad-4a5d330e08c1.png) <- there you will be asked, what you want to do.
 
 
+![alles](https://user-images.githubusercontent.com/56489878/99804306-175d7e00-2b3b-11eb-8c6e-b5575f3d58a0.png) <- grafical user interrface that shows you the days printed in the terminal
