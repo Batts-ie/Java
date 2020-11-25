@@ -16,3 +16,8 @@ https://www.alphavantage.co - registring
 next steps: getting API
 handler, that can output the final results of the api 
 formatting
+
+dependencies: database on port 3306 with root access - JavaFX version 15.01 Library and a JSON Handler - database driver
+
+Program:
+should get the stock curses from a user preferenced amount of time (work will be in progress soon)
