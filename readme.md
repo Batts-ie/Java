@@ -9,3 +9,10 @@ Gets all holidays from Austria on a user preferenced amount of time and puts the
 
 
 ![alles](https://user-images.githubusercontent.com/56489878/99804306-175d7e00-2b3b-11eb-8c6e-b5575f3d58a0.png) <- grafical user interrface that shows you the days printed in the terminal
+
+
+# stock rates
+https://www.alphavantage.co - registring
+next steps: getting API
+handler, that can output the final results of the api 
+formatting
