@@ -3,37 +3,33 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+public class DB{
 
-public class DB {
-    public static void Connection()
-    {
+    public static void Connection(){
         String hostname = "localhost";
-        String dbPort = "3306";
-        String user = "root";
-        String pw = "SHW_Destroyer";
+        String dBPort = "3306";
+        String userName = "root";
+        String password = "SHW_Destroyer";
 
-        Connection con;
-    
-        try 
+        Connection conn;
+		 
+        try{
+            Class.forName("org.mariadb.jdbc.Driver");
+        }
+        catch(Exception e)
         {
-            Class.forName("org.maria.jdbc.Driver");
-        } 
-        catch (Exception e) 
-        {
-            System.out.print("Treiber konnte nicht richtig geladen werden");
+            System.out.println("Treiber konnte nicht richtig geladen werden ... ");
             e.printStackTrace();
         }
-        try 
-        {
-            con = DriverManager.getConnection("jdbc:mariadb//"+hostname+":"+dbPort+"/"+"?user="+user+"&password="+pw+"&serverTimezone=UTC");   
-            Statement stm = con.createStatement();
-            ResultSet rS = stm.executeQuery("SELECT * FROM AKTIE");
+        try {
+               conn = DriverManager.getConnection("jdbc:mariadb//"+hostname+":"+dBPort+"/"+"?user="+userName+"&password="+password+"&serverTimezone=UTC");
+               Statement statement = conn.createStatement();
+               ResultSet rS=statement.executeQuery("Select * from ");
 
-            con.close();
-        } 
-        catch (Exception e) 
-        {
-            e.printStackTrace();
-        }
+               conn.close();
+           }
+           catch (SQLException e) {
+               e.printStackTrace();
+           }
     }
 }
