@@ -33,8 +33,8 @@ public class DB{
            }
     }
 
-    public static void InsertStatement(Connection con, String key, String symbol){
-        String insertInTable = "INSERT INTO"+symbol+"VALUES();";
+    public static void InsertStatement(Connection con, String key, String symbol, double number){
+        String insertInTable =  "INSERT OR REPLACE INTO "+symbol+" VALUES('"+key+"', "+number+");";
 
         try{
             Statement stm = con.createStatement();
@@ -47,7 +47,7 @@ public class DB{
     }
 
     public static void CreateTable(Connection con, String symbol){
-        String createTable = "CREATE TABLE IF NOT EXISTS"+symbol+"(/*values*/);"; // weiterschreiben
+        String createTable = "CREATE TABLE IF NOT EXISTS"+symbol+"(DATE CHAR(10) PRIMARY KEY, VALUE DOUBLE);";
 
         try{
             Statement stm = con.createStatement();
