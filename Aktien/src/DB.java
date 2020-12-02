@@ -11,7 +11,7 @@ public class DB{
         String userName = "root";
         String password = "SHW_Destroyer";
 
-        Connection conn;
+        Connection con;
 		 
         try{
             Class.forName("org.mariadb.jdbc.Driver");
@@ -22,14 +22,40 @@ public class DB{
             e.printStackTrace();
         }
         try {
-               conn = DriverManager.getConnection("jdbc:mariadb//"+hostname+":"+dBPort+"/"+"?user="+userName+"&password="+password+"&serverTimezone=UTC");
-               Statement statement = conn.createStatement();
-               ResultSet rS=statement.executeQuery("Select * from ");
+               con = DriverManager.getConnection("jdbc:mariadb//"+hostname+":"+dBPort+"/"+"?user="+userName+"&password="+password+"&serverTimezone=UTC");
+               Statement statement = con.createStatement();
+             /*  ResultSet rS=statement.executeQuery("Select * from "); */
 
-               conn.close();
+               con.close();
            }
            catch (SQLException e) {
                e.printStackTrace();
            }
+    }
+
+    public static void InsertStatement(Connection con, String key, String symbol){
+        String insertInTable = "INSERT INTO"+symbol+"VALUES();";
+
+        try{
+            Statement stm = con.createStatement();
+            stm.execute(insertInTable);
+        }
+        catch (SQLException e){
+            System.out.println("Die Tabelle konnte die Values nicht aufnehmen");
+            e.printStackTrace();
+        }
+    }
+
+    public static void CreateTable(Connection con, String symbol){
+        String createTable = "CREATE TABLE IF NOT EXISTS"+symbol+"(/*values*/);"; // weiterschreiben
+
+        try{
+            Statement stm = con.createStatement();
+            stm.execute(createTable);
+        }
+        catch (SQLException e){
+            System.out.println("Die Tabelle konnte nicht erzeugt werden");
+            e.printStackTrace();
+        }
     }
 }
