@@ -3,7 +3,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-public class DB{
+public class DB
+{
 
     public static void Connection()
     {
@@ -65,6 +66,34 @@ public class DB{
         catch (SQLException e)
         {
             System.out.println("Die Tabelle konnte nicht erzeugt werden");
+            e.printStackTrace();
+        }
+    }
+
+    public static void CreateSTM(Connection con, String dbName)
+    {
+        String createDatabase = "CREATE DATABASE IF NOT EXISTS "+dbName;
+        try {
+                Statement stm = con.createStatement();
+                stm.execute(createDatabase);
+            }
+        catch (SQLException e)
+                 {
+                    System.out.println("Die Datenbank "+dbName+" konnte nicht erstellt werden");
+                    e.printStackTrace();
+                 }
+    }
+    public static void UseSTM(Connection con, String dbName)
+    {
+        String useDatabase = "USE "+dbName;
+        try
+        {
+            Statement stm = con.createStatement();
+            stm.execute(useDatabase);
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Konnte die Datenbank "+dbName+" nicht festlegen");
             e.printStackTrace();
         }
     }
