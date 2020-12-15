@@ -14,7 +14,7 @@ public class WebRequest
 
     private final String key="&apikey=69WF7TQHE667NCEK";
     private String requestString = "https://www.alphavantage.co/query?";
-    private String function = "?function=";
+    private String function = "?function=TIME_SERIES_DAILY";
     private String symbol = "&symbol=";
     public JSONObject RequestBuilder(String func)
     {
@@ -47,8 +47,7 @@ public class WebRequest
                 System.out.println(response.toString());
                 return new JSONObject(response.toString());
             }
-        }
-         catch (Exception e)
+        }catch (Exception e)
          {
             System.out.println("Der requestString kann entweder nicht gefunden werden, oder nicht geöffnet werden");
             e.printStackTrace();
@@ -60,5 +59,16 @@ public class WebRequest
         String s = requestString+function+symbol+key;
 
         return s;
+    }
+    public List<APIHandler> APIHandler(JSONObject apihandler)
+    {
+        List<APIHandler> result = new ArrayList<APIHandler>();
+        try{
+            System.out.println(result);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return new ArrayList<APIHandler>();
     }
 }

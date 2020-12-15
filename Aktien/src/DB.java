@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 public class DB
 {
+   static Connection con;
 
     public static void Connection()
     {
@@ -38,9 +39,9 @@ public class DB
         }
     }
 
-    public static void InsertStatement(Connection con, String key, String symbol, double number)
+    public static void InsertStatement(String key, String symbol, double number)
     {
-        String insertInTable =  "INSERT OR REPLACE INTO "+symbol+" VALUES('"+key+"', "+number+");";
+        String insertInTable =  "INSERT OR UPDATE INTO "+symbol+" VALUES('"+key+"', "+number+");";
 
         try
         {
@@ -54,7 +55,7 @@ public class DB
         }
     }
 
-    public static void CreateTable(Connection con, String symbol)
+    public static void CreateTable(String symbol)
     {
         String createTable = "CREATE TABLE IF NOT EXISTS"+symbol+"(DATE CHAR(10) PRIMARY KEY, VALUE DOUBLE);";
 
@@ -70,7 +71,7 @@ public class DB
         }
     }
 
-    public static void CreateSTM(Connection con, String dbName)
+    public static void CreateSTM(String dbName)
     {
         String createDatabase = "CREATE DATABASE IF NOT EXISTS "+dbName;
         try {
@@ -83,7 +84,7 @@ public class DB
                     e.printStackTrace();
                  }
     }
-    public static void UseSTM(Connection con, String dbName)
+    public static void UseSTM(String dbName)
     {
         String useDatabase = "USE "+dbName;
         try
