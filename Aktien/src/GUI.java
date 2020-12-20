@@ -1,11 +1,8 @@
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.chart.BarChart;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.*;
 import javafx.scene.*;
-import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 import java.util.Scanner;
 import java.util.ArrayList;
@@ -27,8 +24,23 @@ public class GUI extends Application{
 
 
    }
-   public void Dia(){
-
+   public void Dia(Stage s, String xLabel, String yLabel, String symbol, ArrayList<DS>data)
+   {
+        final CategoryAxis xAxis = new CategoryAxis();
+        final NumberAxis yAxis = new NumberAxis();
+        xAxis.setLabel(xLabel);
+        yAxis.setLabel(yLabel);
+        final LineChart<String, Number> lineChart = new LineChart<>(xAxis, yAxis);
+        lineChart.setTitle(symbol);
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        Scene scene = new Scene(lineChart, 1080, 720);
+        s.setScene(scene);
+        for (DS d : data)
+        {
+            series.getData().add(new XYChart.Data<>(d.getDate(), d.getValue()));
+        }
+        lineChart.getData().add(series);
+        s.show();
    }
    public static void main(String args[]){
       launch(args);
