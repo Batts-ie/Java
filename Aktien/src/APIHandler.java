@@ -4,7 +4,7 @@ import java.util.List;
 import org.json.*;
 
 public class APIHandler {
-
+    static JSONObject json;
     String _symbol;
     LocalDate _time;
     double _close;
@@ -12,6 +12,14 @@ public class APIHandler {
 
     /*Bei TIME_SERIES_DAILY die Close und Volume Werte speichern*/
 
+    private static double getWert(String key) throws JSONException
+    {
+        JSONObject jsonObject = (JSONObject) json.get(key);
+        String value = jsonObject.getString("4. close");
+        return Double.parseDouble(value);
+    }
+
+    // ctor
     public APIHandler(String symbol, LocalDate time, double close, int volume)
     {
         this._symbol = symbol; this._time = time; this._close = close; this._volume = volume;

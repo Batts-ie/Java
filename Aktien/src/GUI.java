@@ -18,7 +18,7 @@ public class GUI extends Application{
        DB database = new DB();
        WebRequest wr = new WebRequest();
        System.out.println("Welche Aktie wollen Sie aufrufen [TSLA][AAPL]: ");
-       String symbol = Reader.next();
+       String symbol = Reader.next().toUpperCase();
        database.CreateTable(symbol);
        /*Insert from WebRequest Data*/
 
