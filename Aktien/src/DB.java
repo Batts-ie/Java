@@ -5,16 +5,19 @@ import java.sql.SQLException;
 import java.sql.Statement;
 public class DB
 {
-   static Connection con;
-
-    public static void Connection()
+    static Connection con;
+    private static String hostname = "localhost";
+    private static String dbName = "Aktien";
+    private String dBPort = "3306";
+    private static String userName = "root";
+    private static String password = "SHW_Destroyer";
+    /*public static void Connection()
     {
         String hostname = "localhost";
+        String dbName = "Aktien";
         String dBPort = "3306";
         String userName = "root";
         String password = "SHW_Destroyer";
-
-        Connection con;
 		 
         try
         {
@@ -27,24 +30,26 @@ public class DB
         }
         try
         {
-               con = DriverManager.getConnection("jdbc:mariadb//"+hostname+":"+dBPort+"/"+"?user="+userName+"&password="+password+"&serverTimezone=UTC");
-               /*Statement statement = */con.createStatement();
+               con = DriverManager.getConnection("jdbc:mysql://"+hostname+"/"+dbName+"?user="+userName+"&password="+password);
+               Statement statement = con.createStatement();
                //ResultSet rS=statement.executeQuery("Select * from ");
 
-               //con.close();
+               con.close();
         }
         catch (SQLException e)
         {
                e.printStackTrace();
         }
-    }
+    }*/
 
     public static void InsertStatement(String key, String symbol, double number)
     {
+
         String insertInTable =  "INSERT OR UPDATE INTO "+symbol+" VALUES('"+key+"', "+number+");";
 
         try
         {
+            con = DriverManager.getConnection("jdbc:mysql://"+hostname+"/"+dbName+"?user="+userName+"&password="+password);
             Statement stm = con.createStatement();
             stm.execute(insertInTable);
         }
@@ -57,10 +62,11 @@ public class DB
 
     public static void CreateTable(String symbol)
     {
-        String createTable = "CREATE TABLE IF NOT EXISTS"+symbol+"(DATE CHAR(10) PRIMARY KEY, VALUE DOUBLE);";
+        String createTable = "CREATE TABLE IF NOT EXISTS "+symbol+"(DATE CHAR(10) PRIMARY KEY, VALUE DOUBLE);";
 
         try
         {
+            con = DriverManager.getConnection("jdbc:mysql://"+hostname+"/"+dbName+"?user="+userName+"&password="+password);
             Statement stm = con.createStatement();
             stm.execute(createTable);
         }

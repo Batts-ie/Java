@@ -15,12 +15,11 @@ public class GUI extends Application{
    public void start(Stage s)
    {
        /*DB Klasse, WebRequest - Abfrage vom Symbol*/
-       //DB database = new DB();
-       //database.Connection();
+       DB database = new DB();
        WebRequest wr = new WebRequest();
        System.out.print("Welche Aktie wollen Sie aufrufen [TSLA][AAPL][AMZN]: ");
        String symbol = Reader.next().toUpperCase();
-       //database.CreateTable(symbol);
+       database.CreateTable(symbol);
 
        /*Insert from APIHandler Data*/
        Dia(s, "Date", "Value", symbol, wr.GetCloseValues(wr.Request(wr.StringBuilder(symbol))));
