@@ -1,13 +1,10 @@
 public class DS
 {
     private String _date;
-    private int _value;
+    private double _value;
 
-    public int getValue()
-    {
-        return this._value;
-    }
-    public void setValue(int value)
+    public double getValue(){return this._value;}
+    public void setValue(double value)
     {
         if(value > 0) this._value = value;
     }
@@ -20,8 +17,12 @@ public class DS
         this._date = date;
     }
 
+
+
+
+
     //public DS("", 0){}
-    public DS(String date, int value)
+    public DS(String date, double value)
     {
         this.setDate(date);
         this.setValue(value);

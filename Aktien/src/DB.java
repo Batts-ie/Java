@@ -28,10 +28,10 @@ public class DB
         try
         {
                con = DriverManager.getConnection("jdbc:mariadb//"+hostname+":"+dBPort+"/"+"?user="+userName+"&password="+password+"&serverTimezone=UTC");
-               Statement statement = con.createStatement();
-             /*  ResultSet rS=statement.executeQuery("Select * from "); */
+               /*Statement statement = */con.createStatement();
+               //ResultSet rS=statement.executeQuery("Select * from ");
 
-               con.close();
+               //con.close();
         }
         catch (SQLException e)
         {

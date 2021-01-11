@@ -12,16 +12,16 @@ import org.json.*;
 public class WebRequest
 {
 
-    private final String key="&apikey=69WF7TQHE667NCEK";
+    private final String key="&apikey=1AD6CE6LV8OFT02F";
     private String requestString = "https://www.alphavantage.co/query?";
-    private String function = "?function=TIME_SERIES_DAILY";
-    private String symbol = "&symbol=";
+    private String function = "function=TIME_SERIES_DAILY&";
+    private String prefsymbol = "&symbol=";
     public JSONObject RequestBuilder(String func)
     {
         HashMap<String, String> mapBuilder = new HashMap<String, String>();
         return new JSONObject();
     }
-    private JSONObject Request(String urlString)
+    public JSONObject Request(String urlString)
     {
 
 
@@ -54,9 +54,9 @@ public class WebRequest
          }
         return null;
     }
-    public String StringBuilder()
+    public String StringBuilder(String symbol)
     {
-        String s = requestString+function+symbol+key;
+        String s = requestString+function+prefsymbol+symbol+key;
 
         return s;
     }
@@ -70,5 +70,25 @@ public class WebRequest
             e.printStackTrace();
         }
         return new ArrayList<APIHandler>();
+    }
+    public ArrayList<DS>GetCloseValues(JSONObject json)
+    {
+        ArrayList<DS> arrayList = new ArrayList<>();
+
+
+        try
+        {
+            JSONObject result = json.getJSONObject("Time Series (Daily)");
+            for(int i = 0; i < result.length(); i++)
+            {
+                JSONObject val = (JSONObject)result.get(result.names().get(i).toString());
+                arrayList.add(new DS(result.names().get(i).toString(), Double.parseDouble(val.get("4. close").toString())));
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return arrayList;
     }
 }

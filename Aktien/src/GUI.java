@@ -15,13 +15,16 @@ public class GUI extends Application{
    public void start(Stage s)
    {
        /*DB Klasse, WebRequest - Abfrage vom Symbol*/
-       DB database = new DB();
+       //DB database = new DB();
+       //database.Connection();
        WebRequest wr = new WebRequest();
-       System.out.println("Welche Aktie wollen Sie aufrufen [TSLA][AAPL]: ");
+       System.out.print("Welche Aktie wollen Sie aufrufen [TSLA][AAPL][AMZN]: ");
        String symbol = Reader.next().toUpperCase();
-       database.CreateTable(symbol);
-       /*Insert from WebRequest Data*/
+       //database.CreateTable(symbol);
 
+       /*Insert from APIHandler Data*/
+       Dia(s, "Date", "Value", symbol, wr.GetCloseValues(wr.Request(wr.StringBuilder(symbol))));
+       //database.InsertStatement("", symbol, );
 
    }
    public void Dia(Stage s, String xLabel, String yLabel, String symbol, ArrayList<DS>data)
