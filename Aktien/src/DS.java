@@ -17,11 +17,7 @@ public class DS
         this._date = date;
     }
 
-
-
-
-
-    //public DS("", 0){}
+    public DS(){this("", 0);}
     public DS(String date, double value)
     {
         this.setDate(date);

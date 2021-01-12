@@ -3,6 +3,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+
 public class DB
 {
     static Connection con;
@@ -42,10 +44,10 @@ public class DB
         }
     }*/
 
-    public static void InsertStatement(String key, String symbol, double number)
+    public static void InsertStatement(String date, String symbol, double number)
     {
 
-        String insertInTable =  "INSERT OR UPDATE INTO "+symbol+" VALUES('"+key+"', "+number+");";
+        String insertInTable =  "UPDATE OR INSERT INTO "+symbol+" VALUES('"+date+"', "+number+");";
 
         try
         {
@@ -76,11 +78,37 @@ public class DB
             e.printStackTrace();
         }
     }
+    public static void SelectStatement(String symbol){
+        String selectCMD = "SELECT * FROM " + symbol+ ";";
+        try
+        {
+            con = DriverManager.getConnection("jdbc:mysql://"+hostname+"/"+dbName+"?user="+userName+"&password="+password);
+            Statement stm = con.createStatement();
+            ResultSet selection = stm.executeQuery(selectCMD);
+            stm.execute(selectCMD);
+            System.out.println("Datum      Wert");
+            while(selection.next())
+            {
+                String date = selection.getString("Date");
+                String val = selection.getString("Value");
 
-    public static void CreateSTM(String dbName)
+                System.out.printf("%1s", date);
+                System.out.printf("%12s", val);
+                System.out.println();
+            }
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Konnte keine Select Abfrage durchführen");
+            e.printStackTrace();
+        }
+    }
+
+    public static void CreateSTM()
     {
         String createDatabase = "CREATE DATABASE IF NOT EXISTS "+dbName;
         try {
+                con = DriverManager.getConnection("jdbc:mysql://"+hostname+"/"+dbName+"?user="+userName+"&password="+password);
                 Statement stm = con.createStatement();
                 stm.execute(createDatabase);
             }
@@ -90,11 +118,12 @@ public class DB
                     e.printStackTrace();
                  }
     }
-    public static void UseSTM(String dbName)
+    public static void UseSTM()
     {
         String useDatabase = "USE "+dbName;
         try
         {
+            con = DriverManager.getConnection("jdbc:mysql://"+hostname+"/"+dbName+"?user="+userName+"&password="+password);
             Statement stm = con.createStatement();
             stm.execute(useDatabase);
         }
