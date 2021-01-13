@@ -21,3 +21,5 @@ dependencies: database on port 3306 with root access - JavaFX version 15.01 Libr
 
 Program:
 Get the stocks on a decent amount of time - output with date and number
+![Aktiepreview](https://user-images.githubusercontent.com/56489878/104446456-c4cc9b00-559a-11eb-8e59-c36b5df8efe2.png) => graph is variating if you choose another stocks type, in this example I used Tesla TSLA
+![Terminal](https://user-images.githubusercontent.com/56489878/104446481-cdbd6c80-559a-11eb-9cf5-955d689660e6.png) => this is the output and the questioning of the terminal, I wrote my code to automatically create a table. Selecting statement also works if you say yes in the terminal.
