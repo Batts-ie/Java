@@ -16,11 +16,7 @@ public class WebRequest
     private String requestString = "https://www.alphavantage.co/query?";
     private String function = "function=TIME_SERIES_DAILY&";
     private String prefsymbol = "&symbol=";
-    public JSONObject RequestBuilder(String func)
-    {
-        HashMap<String, String> mapBuilder = new HashMap<String, String>();
-        return new JSONObject();
-    }
+
     public JSONObject Request(String urlString)
     {
 
@@ -60,17 +56,6 @@ public class WebRequest
 
         return s;
     }
-    public List<APIHandler> APIHandler(JSONObject apihandler)
-    {
-        List<APIHandler> result = new ArrayList<APIHandler>();
-        try{
-            System.out.println(result);
-        }catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        return new ArrayList<APIHandler>();
-    }
     public ArrayList<DS>GetCloseValues(JSONObject json)
     {
         ArrayList<DS> arrayList = new ArrayList<>();
@@ -78,11 +63,17 @@ public class WebRequest
 
         try
         {
+            JSONObject info = json.getJSONObject("Meta Data");
+            String symbol =(String) info.get("2. Symbol");
+            DB.CreateTable(symbol);
             JSONObject result = json.getJSONObject("Time Series (Daily)");
             for(int i = 0; i < result.length(); i++)
             {
-                JSONObject val = (JSONObject)result.get(result.names().get(i).toString());
-                arrayList.add(new DS(result.names().get(i).toString(), Double.parseDouble(val.get("4. close").toString())));
+                String date = result.names().get(i).toString();
+                JSONObject val = (JSONObject)result.get(date);
+                Double wert = Double.parseDouble(val.get("4. close").toString());
+                arrayList.add(new DS(date, wert));
+                DB.InsertStatement(symbol,date,wert);
             }
         }
         catch (Exception e)

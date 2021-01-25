@@ -1,13 +1,10 @@
 import javafx.application.Application;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.chart.*;
-import javafx.scene.*;
 import javafx.stage.Stage;
 import java.util.Scanner;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+
 
 public class GUI extends Application{
     public Scanner Reader = new Scanner(System.in);
@@ -17,20 +14,20 @@ public class GUI extends Application{
        /*DB Klasse, WebRequest - Abfrage vom Symbol*/
        DB database = new DB();
        DS ds = new DS();
+       DB.CreateSTM();
        WebRequest wr = new WebRequest();
        System.out.print("Welche Aktie wollen Sie aufrufen [TSLA][AAPL][AMZN]: ");
        String symbol = Reader.next().toUpperCase();
-       database.CreateTable(symbol);
 
        /*Insert from APIHandler Data*/
-       database.InsertStatement(ds.getDate(), symbol, ds.getValue());
+       //database.InsertStatement(ds.getDate(), symbol, ds.getValue());
        /*DB OUTPUT*/
        System.out.print("Wollen Sie die Datenbank ausgeben?[y,n]: ");
        char choice = Reader.next().toLowerCase().charAt(0);
-       if(choice == 'y') database.SelectStatement(symbol);
+
 
        Dia(s, "Date", "Value", symbol, wr.GetCloseValues(wr.Request(wr.StringBuilder(symbol))));
-
+       if(choice == 'y') database.SelectStatement(symbol);
    }
    public void Dia(Stage s, String xLabel, String yLabel, String symbol, ArrayList<DS>data)
    {

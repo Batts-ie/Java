@@ -44,10 +44,10 @@ public class DB
         }
     }*/
 
-    public static void InsertStatement(String date, String symbol, double number)
+    public static void InsertStatement(String symbol, String date, double number)
     {
 
-        String insertInTable =  "UPDATE OR INSERT INTO "+symbol+" VALUES('"+date+"', "+number+");";
+        String insertInTable =  "REPLACE INTO "+symbol+" VALUES('"+date+"', "+number+");";
 
         try
         {
@@ -86,7 +86,7 @@ public class DB
             Statement stm = con.createStatement();
             ResultSet selection = stm.executeQuery(selectCMD);
             stm.execute(selectCMD);
-            System.out.println("Datum      Wert");
+            System.out.println("   Datum         Wert");
             while(selection.next())
             {
                 String date = selection.getString("Date");
