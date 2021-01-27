@@ -3,6 +3,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,7 +60,6 @@ public class WebRequest
     public ArrayList<DS>GetCloseValues(JSONObject json)
     {
         ArrayList<DS> arrayList = new ArrayList<>();
-
 
         try
         {

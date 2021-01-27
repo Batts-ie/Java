@@ -1,9 +1,7 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DB
 {
@@ -102,6 +100,44 @@ public class DB
             System.out.println("Konnte keine Select Abfrage durchführen");
             e.printStackTrace();
         }
+    }
+    // Select Statement weiterschreiben
+    public double SelectAVGStatement(String symbol, LocalDate avgDate){
+        String selectAVGCMD = "SELECT AVG(value) FROM" + symbol + "WHERE date BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 200 DAY) AND CURRENT_DATE();";
+
+        double avg = 0;
+        try
+        {
+            con = DriverManager.getConnection("jdbc:mysql://"+hostname+"/"+dbName+"?user="+userName+"&password="+password);
+            PreparedStatement stm = con.prepareStatement(selectAVGCMD);
+            stm.setDate(1, java.sql.Date.valueOf(String.valueOf(avgDate)));
+            stm.setDate(2, java.sql.Date.valueOf(String.valueOf(avgDate)));
+            ResultSet rs = stm.executeQuery();
+            while(rs.next())
+            {
+                avg = rs.getDouble("AVG(value)");
+            }
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Konnte keine Select Abfrage durchführen");
+            e.printStackTrace();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return avg;
+    }
+
+    public HashMap<LocalDate, Double> getAVGByClosingVals(HashMap<LocalDate, Double> closingVals, String symbol)
+    {
+        HashMap<LocalDate, Double> avgClosing = new HashMap<>();
+        for(LocalDate key : closingVals.keySet())
+        {
+            avgClosing.put(key, SelectAVGStatement(symbol, key));
+        }
+        return avgClosing;
     }
 
     public static void CreateSTM()
