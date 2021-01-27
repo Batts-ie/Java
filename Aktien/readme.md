@@ -15,7 +15,7 @@ Get the stocks on a decent amount of time - output with date and number
 Selecting Statement: - there are more numbers than just those few btw.
 ![DateandValue](https://user-images.githubusercontent.com/56489878/106044150-a2309b00-60df-11eb-979a-e15eb4059ebc.png)
 
-![Database HeidiSQL Preview](https://user-images.githubusercontent.com/56489878/104446876-589e6700-559b-11eb-8807-a46bde9e3c54.png) => here you can see the database. I used HeidiSQL and the service MariaDB. Now, the insert statement is not working - I will try to fix this as fast as possible. 
+![DateAndVals](https://user-images.githubusercontent.com/56489878/106044958-b0cb8200-60e0-11eb-8ed3-d61ce1862df1.png) => here you can see the database. I used HeidiSQL and the service MariaDB.
 
 
 Line Chart with another Color: ![LineChartWithoutAVG](https://user-images.githubusercontent.com/56489878/106044283-d0ae7600-60df-11eb-8577-3decf8253142.png)
