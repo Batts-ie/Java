@@ -1,16 +1,17 @@
+/*import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
 
 public class DB
 {
+    static WebRequest wr = new WebRequest();
     static Connection con;
     private static String hostname = "localhost";
     private static String dbName = "Aktien";
     private String dBPort = "3306";
     private static String userName = "root";
     private static String password = "SHW_Destroyer";
+
     /*public static void Connection()
     {
         String hostname = "localhost";
@@ -42,117 +43,19 @@ public class DB
         }
     }*/
 
-    public static void InsertStatement(String symbol, String date, double number)
-    {
-
-        String insertInTable =  "REPLACE INTO "+symbol+" VALUES('"+date+"', "+number+");";
-
-        try
-        {
-            con = DriverManager.getConnection("jdbc:mysql://"+hostname+"/"+dbName+"?user="+userName+"&password="+password);
-            Statement stm = con.createStatement();
-            stm.execute(insertInTable);
-        }
-        catch (SQLException e)
-        {
-            System.out.println("Die Tabelle konnte die Values nicht aufnehmen");
-            e.printStackTrace();
-        }
-    }
-
-    public static void CreateTable(String symbol)
-    {
-        String createTable = "CREATE TABLE IF NOT EXISTS "+symbol+"(DATE CHAR(10) PRIMARY KEY, VALUE DOUBLE);";
-
-        try
-        {
-            con = DriverManager.getConnection("jdbc:mysql://"+hostname+"/"+dbName+"?user="+userName+"&password="+password);
-            Statement stm = con.createStatement();
-            stm.execute(createTable);
-        }
-        catch (SQLException e)
-        {
-            System.out.println("Die Tabelle konnte nicht erzeugt werden");
-            e.printStackTrace();
-        }
-    }
-    public static void SelectStatement(String symbol){
-        String selectCMD = "SELECT * FROM " + symbol+ ";";
-        try
-        {
-            con = DriverManager.getConnection("jdbc:mysql://"+hostname+"/"+dbName+"?user="+userName+"&password="+password);
-            Statement stm = con.createStatement();
-            ResultSet selection = stm.executeQuery(selectCMD);
-            stm.execute(selectCMD);
-            System.out.println("   Datum         Wert");
-            while(selection.next())
-            {
-                String date = selection.getString("Date");
-                String val = selection.getString("Value");
-
-                System.out.printf("%1s", date);
-                System.out.printf("%12s", val);
-                System.out.println();
-            }
-        }
-        catch (SQLException e)
-        {
-            System.out.println("Konnte keine Select Abfrage durchführen");
-            e.printStackTrace();
-        }
-    }
-    // Select Statement weiterschreiben
-    public double SelectAVGStatement(String symbol, LocalDate avgDate){
-        String selectAVGCMD = "SELECT AVG(value) FROM" + symbol + "WHERE date BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 200 DAY) AND CURRENT_DATE();";
-
-        double avg = 0;
-        try
-        {
-            con = DriverManager.getConnection("jdbc:mysql://"+hostname+"/"+dbName+"?user="+userName+"&password="+password);
-            PreparedStatement stm = con.prepareStatement(selectAVGCMD);
-            stm.setDate(1, java.sql.Date.valueOf(String.valueOf(avgDate)));
-            stm.setDate(2, java.sql.Date.valueOf(String.valueOf(avgDate)));
-            ResultSet rs = stm.executeQuery();
-            while(rs.next())
-            {
-                avg = rs.getDouble("AVG(value)");
-            }
-        }
-        catch (SQLException e)
-        {
-            System.out.println("Konnte keine Select Abfrage durchführen");
-            e.printStackTrace();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        return avg;
-    }
-
-    public HashMap<LocalDate, Double> getAVGByClosingVals(HashMap<LocalDate, Double> closingVals, String symbol)
-    {
-        HashMap<LocalDate, Double> avgClosing = new HashMap<>();
-        for(LocalDate key : closingVals.keySet())
-        {
-            avgClosing.put(key, SelectAVGStatement(symbol, key));
-        }
-        return avgClosing;
-    }
-
-    public static void CreateSTM()
+ /*   public static void CreateSTM()
     {
         String createDatabase = "CREATE DATABASE IF NOT EXISTS "+dbName;
         try {
-                con = DriverManager.getConnection("jdbc:mysql://"+hostname+"/"+dbName+"?user="+userName+"&password="+password);
-                Statement stm = con.createStatement();
-                stm.execute(createDatabase);
-            }
+            con = DriverManager.getConnection("jdbc:mysql://"+hostname+"/"+dbName+"?user="+userName+"&password="+password);
+            Statement stm = con.createStatement();
+            stm.execute(createDatabase);
+        }
         catch (SQLException e)
-                 {
-                    System.out.println("Die Datenbank "+dbName+" konnte nicht erstellt werden");
-                    e.printStackTrace();
-                 }
+        {
+            System.out.println("Die Datenbank "+dbName+" konnte nicht erstellt werden");
+            e.printStackTrace();
+        }
     }
     public static void UseSTM()
     {
@@ -169,4 +72,124 @@ public class DB
             e.printStackTrace();
         }
     }
-}
+    public static void CreateTable(String symbol)
+    {
+        String createTable = "CREATE TABLE IF NOT EXISTS "+symbol+"(DATE CHAR(10) PRIMARY KEY, VALUE DOUBLE, AVERAGE DOUBLE);";
+
+        try
+        {
+            con = DriverManager.getConnection("jdbc:mysql://"+hostname+"/"+dbName+"?user="+userName+"&password="+password);
+            Statement stm = con.createStatement();
+            stm.execute(createTable);
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Die Tabelle konnte nicht erzeugt werden");
+            e.printStackTrace();
+        }
+    }
+    public static void InsertStatementClose(String symbol)
+    {
+        String insertInTable =  "REPLACE Into" + symbol + "(Date,VALUE) + value  ('?',?);";
+
+        try
+        {
+            con = DriverManager.getConnection("jdbc:mysql://"+hostname+"/"+dbName+"?user="+userName+"&password="+password);
+            Statement stm = con.createStatement();
+            for(int i = 0; i< wr.arrayListClose.size();i++)
+            {
+                insertInTable = "insert into "+ symbol + "(date,value) values (\""+ wr.arrayListDate.get(i).toString() +"\"," + wr.arrayListClose.get(i) + ");";
+                stm.execute(insertInTable);
+            }
+            System.out.println(wr.arrayListClose);
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Die Tabelle konnte die Values nicht aufnehmen");
+            e.printStackTrace();
+        }
+    }
+    // Select Statement weiterschreiben
+    public static void SelectAVGStatement(String symbol) {
+        try
+        {
+            Connection con = DriverManager.getConnection("jdbc:mysql://" + hostname + "/" + dbName + "?user=" + userName + "&password=" + password);
+            Statement stmt = con.createStatement();
+            for (LocalDate avg : wr.arrayListDate)
+            {
+                String selectAVGCMD = "Select avg(value) from " + symbol + " where (date < '" + avg.toString() + "') and (datum >= '" + avg.minusDays(200).toString() + "') order by datum desc;";
+                ResultSet rs = stmt.executeQuery(selectAVGCMD);
+                while(rs.next())
+                {
+                    for(int i = 0; i<rs.getMetaData().getColumnCount();i++)
+                    {
+                        wr.arrayListAVG.add(rs.getDouble(i+1));
+                    }
+                }
+            }
+            System.out.println(wr.arrayListDate);
+            System.out.println(wr.arrayListAVG);
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+    public static void InsertStatementAvg(String symbol)
+    {
+        String insertInTableAVG = "Replace into "+symbol + "(Date,Average) + values ('?',?);";
+        try
+        {
+            con = DriverManager.getConnection("jdbc:mysql://"+hostname+"/"+dbName+"?user="+userName+"&password="+password);
+            Statement stm = con.createStatement();
+            for(int i = 0; i<wr.arrayListAVG.size();i++)
+            {
+                insertInTableAVG = "insert into " +symbol+ "(date, AVERAGE) values (\"" + wr.arrayListDate.get(i).toString() + "\"," + wr.arrayListAVG.get(i) + ");";
+                stm.execute(insertInTableAVG);
+            }
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+    }
+    public static void SelectStatement(String symbol){
+        String selectCMD = "SELECT * FROM " + symbol+ " order by date desc;";
+        try
+        {
+            con = DriverManager.getConnection("jdbc:mysql://"+hostname+"/"+dbName+"?user="+userName+"&password="+password);
+            Statement stm = con.createStatement();
+            ResultSet selection = stm.executeQuery(selectCMD);
+            stm.execute(selectCMD);
+            System.out.println("   Datum         Wert");
+            while(selection.next())
+            {
+                System.out.println(
+                    selection.getString("date") + "\t \t \t \t" +
+                    selection.getDouble("value") + "\t \t \t \t" +
+                    selection.getDouble("average")
+                );
+                Double avgTemp = selection.getDouble("average");
+                wr.dateDB.add(selection.getString("date"));
+                wr.closeDB.add(selection.getDouble("value"));
+                wr.avgDB.add(avgTemp == 0 ? null : avgTemp);
+            }
+            wr.dateDB.sort(null);
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Konnte keine Select Abfrage durchführen");
+            e.printStackTrace();
+        }
+    }
+
+    /*public HashMap<LocalDate, Double> getAVGByClosingVals(HashMap<LocalDate, Double> closingVals, String symbol)
+    {
+        HashMap<LocalDate, Double> avgClosing = new HashMap<>();
+        for(LocalDate key : closingVals.keySet())
+        {
+            avgClosing.put(key, SelectAVGStatement(symbol, key));
+        }
+        return avgClosing;
+    }
+}*/

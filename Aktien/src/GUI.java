@@ -2,9 +2,12 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.chart.*;
 import javafx.stage.Stage;
+import org.json.JSONException;
 
-import javax.swing.text.html.CSS;
+import java.io.IOException;
+import java.nio.DoubleBuffer;
 import java.time.LocalDate;
+import java.util.Locale;
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -12,50 +15,75 @@ import java.util.ArrayList;
 public class GUI extends Application{
     public Scanner Reader = new Scanner(System.in);
     WebRequest wr = new WebRequest();
-    DB database = new DB();
-    DS ds = new DS();
    @Override
-   public void start(Stage s)
-   {
+   public void start(Stage s) throws IOException, JSONException {
        /*DB Klasse, WebRequest - Abfrage vom Symbol*/
 
 
-       DB.CreateSTM();
+       wr.CreateSTM();
+
 
        System.out.print("Welche Aktie wollen Sie aufrufen [TSLA][AAPL][AMZN]: ");
        String symbol = Reader.next().toUpperCase();
        /*Insert from APIHandler Data*/
        //database.InsertStatement(ds.getDate(), symbol, ds.getValue());
        /*DB OUTPUT*/
+       wr.GetCloseValues(symbol);
+       wr.CreateSTM();
+       wr.UseSTM();
+       wr.CreateTable(symbol);
+       wr.InsertStatementClose(symbol);
+       wr.SelectAVGStatement(symbol);
+       wr.InsertStatementAvg(symbol);
+
        System.out.print("Wollen Sie die Datenbank ausgeben?[y,n]: ");
        char choice = Reader.next().toLowerCase().charAt(0);
+       if(choice == 'y')
+       {
+           wr.SelectStatement(symbol);
+       }
+       // JAVAFX:
+       try {
+           final CategoryAxis xAxis = new CategoryAxis();
+           final NumberAxis yAxis = new NumberAxis();
+           yAxis.setAutoRanging(false);
 
-       Dia(s, "Date", "Value", symbol, wr.GetCloseValues(wr.Request(wr.StringBuilder(symbol))));
-       if(choice == 'y') database.SelectStatement(symbol);
-   }
-   public void Dia(Stage s, String xLabel, String yLabel, String symbol, ArrayList<DS>data)
-   {
-        final CategoryAxis xAxis = new CategoryAxis();
-        final NumberAxis yAxis = new NumberAxis();
-        xAxis.setLabel(xLabel);
-        yAxis.setLabel(yLabel);
-        final LineChart<String, Number> lineChart = new LineChart<>(xAxis, yAxis);
-        lineChart.setTitle(symbol);
-        lineChart.setCreateSymbols(false);
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        Scene scene = new Scene(lineChart, 1080, 720);
-        s.setScene(scene);
-        for (DS d : data)
-        {
-            series.getData().add(new XYChart.Data<>(d.getDate(), d.getValue()));
-        }
-        lineChart.getData().add(series);
-        series.getNode().lookup(".chart-series-line").setStyle("-fx-stroke: black;");
-        lineChart.lookup(".chart-plot-background").setStyle("-fx-background-color: transparent;");
-        lineChart.setStyle("-fx-background-color: #0ef898;");
-        lineChart.setCreateSymbols(false);
-        series.setName("Close Werte");
-        s.show();
+
+           yAxis.setLowerBound(80.0);
+           yAxis.setUpperBound(500.0);
+
+           xAxis.setLabel("date");
+           yAxis.setLabel("close-value");
+           final LineChart<String, Number> lineChart = new LineChart<String,Number>(xAxis,yAxis);
+           lineChart.setTitle("stock-price "+ symbol);
+           XYChart.Series<String, Number> closeStat = new XYChart.Series();
+           closeStat.setName("close-value");
+           for( int i = 0; i< wr.arrayListClose.size(); i++)
+           {
+               closeStat.getData().add(new XYChart.Data(wr.dateDB.get(i), wr.closeDB.get(i)));
+           }
+           XYChart.Series<String, Number> averageStat = new XYChart.Series();
+           averageStat.setName("moving average");
+           for( int i = 1; i< wr.arrayListAVG.size() - 1;i++)
+           {
+               averageStat.getData().add(new XYChart.Data(wr.dateDB.get(i), wr.avgDB.get(i)));
+           }
+
+           Scene scene = new Scene(lineChart, 1000, 600);
+           lineChart.getData().add(closeStat);
+           lineChart.getData().add(averageStat);
+
+           lineChart.setCreateSymbols(false);
+           s.setScene(scene);
+           s.show();
+
+       }
+       catch(Exception e)
+       {
+           e.printStackTrace();
+       }
+
+
    }
    public static void main(String args[]){
       launch(args);
