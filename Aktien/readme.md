@@ -19,3 +19,8 @@ Selecting Statement: - there are more numbers than just those few btw.
 
 
 Line Chart with another Color: ![LineChartWithoutAVG](https://user-images.githubusercontent.com/56489878/106044283-d0ae7600-60df-11eb-8577-3decf8253142.png)
+
+
+Line Chart with Close and Average values: 
+
+![unknown (11)](https://user-images.githubusercontent.com/56489878/106153242-9ea02100-617e-11eb-9571-d05279ed84ca.png)
