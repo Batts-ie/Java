@@ -231,4 +231,34 @@ public class WebRequest
             e.printStackTrace();
         }
     }
+    public double getLowerBound(String symbol){
+        String minCMD = "SELECT MIN(value) FROM "+symbol+";";
+        double min = 0;
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://" + hostname + "/" + dbName + "?user=" + userName + "&password=" + password);
+            Statement stm = con.createStatement();
+            ResultSet rsmin = stm.executeQuery(minCMD);
+            while(rsmin.next()){
+                min = rsmin.getDouble(1);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return min;
+    }
+    public double getUpperBound(String symbol){
+            String maxCMD = "SELECT MAX(value) FROM "+symbol+";";
+            double max = 0;
+            try {
+                con = DriverManager.getConnection("jdbc:mysql://" + hostname + "/" + dbName + "?user=" + userName + "&password=" + password);
+                Statement stm = con.createStatement();
+                ResultSet rsmax = stm.executeQuery(maxCMD);
+                while (rsmax.next()){
+                    max = rsmax.getDouble(1);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return max;
+    }
 }

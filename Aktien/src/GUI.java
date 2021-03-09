@@ -1,9 +1,14 @@
 import javafx.application.Application;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.*;
+import javafx.scene.image.WritableImage;
 import javafx.stage.Stage;
 import org.json.JSONException;
 
+import javax.imageio.ImageIO;
+import java.io.File;
 import java.io.IOException;
 import java.nio.DoubleBuffer;
 import java.time.LocalDate;
@@ -49,8 +54,8 @@ public class GUI extends Application{
            yAxis.setAutoRanging(false);
 
 
-           yAxis.setLowerBound(80.0);
-           yAxis.setUpperBound(500.0);
+           yAxis.setLowerBound(wr.getLowerBound(symbol));
+           yAxis.setUpperBound(wr.getUpperBound(symbol));
 
            xAxis.setLabel("date");
            yAxis.setLabel("close-value");
@@ -76,15 +81,23 @@ public class GUI extends Application{
            lineChart.setCreateSymbols(false);
            s.setScene(scene);
            s.show();
+           saveAsPng(lineChart, "C:\\Users\\Michael\\Desktop\\Schule\\4AHWII\\HTL-SWP_Java\\HTL-SWP_Java\\Aktien\\img\\chart-"+symbol+"-stocks.png");
 
        }
        catch(Exception e)
        {
            e.printStackTrace();
        }
-
-
    }
+    public void saveAsPng(LineChart lineChart, String path) {
+        WritableImage image = lineChart.snapshot(new SnapshotParameters(), null);
+        File file = new File(path);
+        try {
+            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
    public static void main(String args[]){
       launch(args);
    }
