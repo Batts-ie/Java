@@ -24,9 +24,16 @@ public class WebRequest
     public static ArrayList<Double> closeDB = new ArrayList<>();
     public static ArrayList<String> dateDB = new ArrayList<>();
 
+    /*
+    new Arraylist for corrected
+     */
+    public static ArrayList<Double> splitList = new ArrayList<>();
+    public static ArrayList<Double> splitCorrected = new ArrayList<>();
+
+
     private final String key="&apikey=1AD6CE6LV8OFT02F";
     private String requestString = "https://www.alphavantage.co/query?";
-    private String function = "function=TIME_SERIES_DAILY&";
+    private String function = "function=TIME_SERIES_DAILY_ADJUSTED&";
     private String prefsymbol = "&symbol=";
 
     public static Connection con;
@@ -260,5 +267,62 @@ public class WebRequest
                 e.printStackTrace();
             }
             return max;
+    }
+    public static void getSplit(String symbol) throws JSONException, IOException {
+        try {
+            String url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=" + symbol + "&outputsize=full&apikey=1AD6CE6LV8OFT02F";
+            JSONObject json = new JSONObject(IOUtils.toString(new URL(url), Charset.forName("UTF-8")));
+            json = json.getJSONObject("Time Series (Daily)");
+            for (int i = 0; i < json.names().length(); i++) {
+                arrayListDate.add(LocalDate.parse((CharSequence) json.names().get(i)));
+                arrayListDate.sort(null);
+                splitList.add(json.getJSONObject(LocalDate.parse((CharSequence) json.names().get(i)).toString()).getDouble("8. split coefficient"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public static void split(String symbol){
+        String cmd = "SELECT * FROM " + symbol + "spcorrected ORDER BY DATE DESC;";
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://" + hostname + "/" + dbName + "?user=" + userName + "&password=" + password);
+            arrayListDate = new ArrayList<>();
+            splitList = new ArrayList<>();
+            arrayListClose = new ArrayList<>();
+            Statement stm = con.createStatement();
+            ResultSet rs = stm.executeQuery(cmd);
+            while(rs.next()){
+                rs.getString("DATE");
+                rs.getDouble("CLOSE");
+                rs.getDouble("CORRECTED");
+                arrayListDate.add(LocalDate.parse(rs.getString("DATE")));
+                arrayListClose.add(rs.getDouble("CLOSE"));
+                splitList.add(rs.getDouble("CORRECTED"));
+            }
+            double div = 1;
+            for (int i = 0; i < splitList.size(); i++){
+                splitCorrected.add(arrayListClose.get(i) / div);
+                div *= splitList.get(i);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public static void selectInsertSplit(String symbol){
+        String cmdC = "CREATE TABLE IF NOT EXISTS" + symbol + "spcorrected (DATE DATE, DECIMAL CLOSE, DECIMAL CORRECTED, PRIMARY KEY(DATE));";
+        String cmdI = "INSERT INTO " + symbol + "spcorrected (DATE, CLOSE, CORRECTED) VALUE('?',?,?);";
+
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://" + hostname + "/" + dbName + "?user=" + userName + "&password=" + password);
+            Statement stm = con.createStatement();
+            stm.execute(cmdC);
+            for(int i = 0; i < splitList.size(); i++){
+                cmdI = "INSERT INTO "+ symbol + "spcorrected (DATE, CLOSE, CORRECTED) VALUES(\""+ arrayListDate.get(i).toString() + "\"," +
+                        arrayListClose.get(i) + "," + splitList.get(i) + ";";
+                stm.execute(cmdI);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

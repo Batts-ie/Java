@@ -6,15 +6,10 @@ import javafx.scene.chart.*;
 import javafx.scene.image.WritableImage;
 import javafx.stage.Stage;
 import org.json.JSONException;
-
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
-import java.nio.DoubleBuffer;
-import java.time.LocalDate;
-import java.util.Locale;
 import java.util.Scanner;
-import java.util.ArrayList;
 
 
 public class GUI extends Application{
@@ -26,7 +21,6 @@ public class GUI extends Application{
 
 
        wr.CreateSTM();
-
 
        System.out.print("Welche Aktie wollen Sie aufrufen [TSLA][AAPL][AMZN]: ");
        String symbol = Reader.next().toUpperCase();
@@ -43,8 +37,7 @@ public class GUI extends Application{
 
        System.out.print("Wollen Sie die Datenbank ausgeben?[y,n]: ");
        char choice = Reader.next().toLowerCase().charAt(0);
-       if(choice == 'y')
-       {
+       if (choice == 'y') {
            wr.SelectStatement(symbol);
        }
        // JAVAFX:
@@ -59,18 +52,16 @@ public class GUI extends Application{
 
            xAxis.setLabel("date");
            yAxis.setLabel("close-value");
-           final LineChart<String, Number> lineChart = new LineChart<String,Number>(xAxis,yAxis);
-           lineChart.setTitle("stock-price "+ symbol);
+           final LineChart<String, Number> lineChart = new LineChart<String, Number>(xAxis, yAxis);
+           lineChart.setTitle("stock-price " + symbol);
            XYChart.Series<String, Number> closeStat = new XYChart.Series();
            closeStat.setName("close-value");
-           for( int i = 0; i< wr.arrayListClose.size(); i++)
-           {
+           for (int i = 0; i < wr.arrayListClose.size(); i++) {
                closeStat.getData().add(new XYChart.Data(wr.dateDB.get(i), wr.closeDB.get(i)));
            }
            XYChart.Series<String, Number> averageStat = new XYChart.Series();
            averageStat.setName("moving average");
-           for( int i = 1; i< wr.arrayListAVG.size() - 1;i++)
-           {
+           for (int i = 1; i < wr.arrayListAVG.size() - 1; i++) {
                averageStat.getData().add(new XYChart.Data(wr.dateDB.get(i), wr.avgDB.get(i)));
            }
 
@@ -81,11 +72,9 @@ public class GUI extends Application{
            lineChart.setCreateSymbols(false);
            s.setScene(scene);
            s.show();
-           saveAsPng(lineChart, "C:\\Users\\Michael\\Desktop\\Schule\\4AHWII\\HTL-SWP_Java\\HTL-SWP_Java\\Aktien\\img\\chart-"+symbol+"-stocks.png");
+           saveAsPng(lineChart, "C:\\Users\\Michael\\Desktop\\Schule\\4AHWII\\HTL-SWP_Java\\HTL-SWP_Java\\Aktien\\img\\chart-" + symbol + "-stocks.png");
 
-       }
-       catch(Exception e)
-       {
+       } catch (Exception e) {
            e.printStackTrace();
        }
    }
