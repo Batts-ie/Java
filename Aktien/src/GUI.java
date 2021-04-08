@@ -34,10 +34,13 @@ public class GUI extends Application{
        wr.InsertStatementClose(symbol);
        wr.SelectAVGStatement(symbol);
        wr.InsertStatementAvg(symbol);
-
+       //wr.selectInsertSplit(symbol);
+       //wr.split(symbol);
+       //wr.update(symbol);
        System.out.print("Wollen Sie die Datenbank ausgeben?[y,n]: ");
        char choice = Reader.next().toLowerCase().charAt(0);
        if (choice == 'y') {
+           wr.ListNull();
            wr.SelectStatement(symbol);
        }
        // JAVAFX:

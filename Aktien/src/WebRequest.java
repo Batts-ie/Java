@@ -133,15 +133,23 @@ public class WebRequest
     }
     public static void CreateTable(String symbol)
     {
+        String dropTable = "drop table " + symbol;
         String createTable = "CREATE TABLE IF NOT EXISTS "+symbol+" (DATE CHAR(10) PRIMARY KEY, VALUE DOUBLE, AVERAGE DOUBLE);";
+        String dropTableavg = "drop table " + symbol+"avg ;";
         String createTableavg = "CREATE TABLE IF NOT EXISTS "+symbol+"avg (DATE CHAR(10) PRIMARY KEY, AVERAGE DOUBLE);";
+        String dropTableC = "drop table " + symbol+"spcorrected ;";
+        String cmdC = "CREATE TABLE IF NOT EXISTS " + symbol + "spcorrected (DATE CHAR(10) PRIMARY KEY, VALUE DOUBLE, CORRECTED DOUBLE);";
 
         try
         {
             con = DriverManager.getConnection("jdbc:mysql://"+hostname+"/"+dbName+"?user="+userName+"&password="+password);
             Statement stm = con.createStatement();
+            stm.execute(dropTable);
             stm.execute(createTable);
+            stm.execute(dropTableavg);
             stm.execute(createTableavg);
+            stm.execute(dropTableC);
+            stm.execute(cmdC);
         }
         catch (SQLException e)
         {
@@ -207,8 +215,8 @@ public class WebRequest
         }
     }
     public static void SelectStatement(String symbol){
-        String selectCMD = "SELECT * FROM " + symbol+ " order by date desc;";
-        String selectCMDAVG = "SELECT * FROM " + symbol+ "avg order by date desc";
+        String selectCMD = "SELECT * FROM " + symbol+ " order by date;";
+        String selectCMDAVG = "SELECT * FROM " + symbol+ "avg order by date";
         try
         {
             con = DriverManager.getConnection("jdbc:mysql://"+hostname+"/"+dbName+"?user="+userName+"&password="+password);
@@ -217,6 +225,7 @@ public class WebRequest
             ResultSet selectionAVG = stm.executeQuery(selectCMDAVG);
             stm.execute(selectCMD);
             stm.execute(selectCMDAVG);
+            System.out.println(arrayListClose);
             System.out.println("   Datum         Wert");
             while(selection.next() && selectionAVG.next())
             {
@@ -227,9 +236,10 @@ public class WebRequest
                 );
                 Double avgTemp = selectionAVG.getDouble("average");
                 dateDB.add(selectionAVG.getString("date"));
-                closeDB.add(selection.getDouble("VALUE"));
+                closeDB.add(selection.getDouble("value"));
                 avgDB.add(avgTemp == 0 ? null : avgTemp);
             }
+            System.out.println(closeDB);
             dateDB.sort(null);
         }
         catch (SQLException e)
@@ -282,7 +292,7 @@ public class WebRequest
             e.printStackTrace();
         }
     }
-    public static void split(String symbol){
+    /*public void split(String symbol){
         String cmd = "SELECT * FROM " + symbol + "spcorrected ORDER BY DATE DESC;";
         try {
             con = DriverManager.getConnection("jdbc:mysql://" + hostname + "/" + dbName + "?user=" + userName + "&password=" + password);
@@ -293,36 +303,52 @@ public class WebRequest
             ResultSet rs = stm.executeQuery(cmd);
             while(rs.next()){
                 rs.getString("DATE");
-                rs.getDouble("CLOSE");
+                rs.getDouble("VALUE");
                 rs.getDouble("CORRECTED");
                 arrayListDate.add(LocalDate.parse(rs.getString("DATE")));
-                arrayListClose.add(rs.getDouble("CLOSE"));
+                arrayListClose.add(rs.getDouble("VALUE"));
                 splitList.add(rs.getDouble("CORRECTED"));
             }
             double div = 1;
             for (int i = 0; i < splitList.size(); i++){
                 splitCorrected.add(arrayListClose.get(i) / div);
-                div *= splitList.get(i);
+                div = div * splitList.get(i);
             }
         }catch (Exception e){
             e.printStackTrace();
         }
     }
-    public static void selectInsertSplit(String symbol){
-        String cmdC = "CREATE TABLE IF NOT EXISTS" + symbol + "spcorrected (DATE DATE, DECIMAL CLOSE, DECIMAL CORRECTED, PRIMARY KEY(DATE));";
-        String cmdI = "INSERT INTO " + symbol + "spcorrected (DATE, CLOSE, CORRECTED) VALUE('?',?,?);";
-
+    public void selectInsertSplit(String symbol){
+        String cmdI;
         try {
             con = DriverManager.getConnection("jdbc:mysql://" + hostname + "/" + dbName + "?user=" + userName + "&password=" + password);
             Statement stm = con.createStatement();
-            stm.execute(cmdC);
             for(int i = 0; i < splitList.size(); i++){
-                cmdI = "INSERT INTO "+ symbol + "spcorrected (DATE, CLOSE, CORRECTED) VALUES(\""+ arrayListDate.get(i).toString() + "\"," +
+                cmdI = "INSERT INTO "+ symbol + "spcorrected (DATE, VALUE, CORRECTED) VALUES(\""+ arrayListDate.get(i).toString() + "\"," +
                         arrayListClose.get(i) + "," + splitList.get(i) + ";";
                 stm.execute(cmdI);
             }
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+    public void update(String symbol){
+        String cmd;
+        try{
+            con = DriverManager.getConnection("jdbc:mysql://" + hostname + "/" + dbName + "?user=" + userName + "&password=" + password);
+            Statement stm = con.createStatement();
+            for (int i = 0; i < arrayListClose.size(); i++){
+                cmd = "UPDATE "+ symbol + " SET VALUE = " + splitCorrected.get(i) + " WHERE DATE = \"" + arrayListDate.get(i).toString() + "\";";
+                stm.execute(cmd);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }*/
+    public void ListNull()
+    {
+        dateDB = new ArrayList<>();
+        closeDB = new ArrayList<>();
+        avgDB = new ArrayList<>();
     }
 }
