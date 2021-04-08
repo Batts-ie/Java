@@ -32,16 +32,17 @@ public class GUI extends Application{
        wr.UseSTM();
        wr.CreateTable(symbol);
        wr.InsertStatementClose(symbol);
+       wr.getSplit(symbol);
+       wr.selectInsertSplit(symbol);
+       wr.split(symbol);
+       wr.update(symbol);
        wr.SelectAVGStatement(symbol);
        wr.InsertStatementAvg(symbol);
-       //wr.selectInsertSplit(symbol);
-       //wr.split(symbol);
-       //wr.update(symbol);
        System.out.print("Wollen Sie die Datenbank ausgeben?[y,n]: ");
        char choice = Reader.next().toLowerCase().charAt(0);
        if (choice == 'y') {
            wr.ListNull();
-           wr.SelectStatement(symbol);
+           wr.selectAll(symbol);
        }
        // JAVAFX:
        try {
@@ -91,6 +92,6 @@ public class GUI extends Application{
         }
     }
    public static void main(String args[]){
-      launch(args);
+       launch(args);
    }
 }
