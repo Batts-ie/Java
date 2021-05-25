@@ -45,6 +45,7 @@ public class GUI extends Application{
                wr.InsertStatementAvg(symbol);
                wr.ListNull();
                wr.selectAll(symbol);
+               wr.createTradingTable(symbol);
 
            // JAVAFX:
            try {

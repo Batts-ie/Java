@@ -6,11 +6,15 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
 import org.json.*;
 import org.apache.commons.io.IOUtils;
+
+import javax.swing.plaf.nimbus.State;
+import javax.xml.transform.Result;
 
 public class WebRequest
 {
@@ -340,6 +344,78 @@ public class WebRequest
                 stm.execute(cmd);
             }
         }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private LocalDate currentdate = LocalDate.of(2010, 1, 1);
+    int count = 0;
+    boolean bought = false;
+    double money = 100000;
+
+
+    public void createTradingTable(String symbol){
+
+        String cmdC;
+        try{
+            con = DriverManager.getConnection("jdbc:mysql://" + hostname + "/" + dbName + "?user=" + userName + "&password=" + password);
+            cmdC = "CREATE TABLE " + symbol + "trading (currentDate DATE NOT NULL PRIMARY KEY, bought char(1), count int, money int);";
+            Statement stm = con.createStatement();
+            stm.execute(cmdC);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    /*public void getTradingVals(String symbol){
+        String cmdC;
+        try{
+            con = DriverManager.getConnection("jdbc:mysql://" + hostname + "/" + dbName + "?user=" + userName + "&password=" + password);
+            cmdC = "SELECT * FROM " + symbol + "trading";
+            Statement stm = con.createStatement();
+            stm.execute(cmdC);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }*/
+
+    public void trading(String symbol) {
+        String cmd;
+        try{
+            con = DriverManager.getConnection("jdbc:mysql://" + hostname + "/" + dbName + "?user=" + userName + "&password=" + password);
+            while (currentdate.isAfter(LocalDate.now())) {
+                if(currentdate.getDayOfWeek() != DayOfWeek.SATURDAY && currentdate.getDayOfWeek() != DayOfWeek.SUNDAY){
+                    double close = 0, _200, corrected;
+                    Statement stm = con.createStatement();
+                    cmd = "SELECT * FROM " + symbol + "trading";
+                    ResultSet resSet;
+                    resSet = stm.executeQuery(cmd);
+                    if(resSet.next())
+                        close = resSet.getDouble(1);
+                        _200 = resSet.getDouble(2);
+                        corrected = resSet.getDouble(3);
+                        if(corrected != 1){
+                            count *= corrected;
+                        }
+                        if(close > _200 && !bought){
+                            for (int i = 0; money > close; i++){
+                                count = i;
+                                bought = true;
+                                money -= close;
+                            }
+                            System.out.println("bought: " + count + "\n");
+                        }
+                        if(close < _200 && bought){
+                            money = close * count;
+                            count = 0;
+                            bought = false;
+                            // insert methode
+                            System.out.println("Sold for: " + money + "\n");
+                        }
+                    }
+                    currentdate = currentdate.plusDays(1);
+                    System.out.println(currentdate);
+                }
+            }catch (Exception e){
             e.printStackTrace();
         }
     }
