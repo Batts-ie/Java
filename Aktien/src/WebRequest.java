@@ -533,7 +533,8 @@ public class WebRequest
                     anzahl = rs.getInt("number");
                     depot = rs.getInt("depot");
                 }
-            } catch (SQLException ex) {
+            }
+            catch (SQLException ex) {
                 System.out.println(ex.getMessage());
             } finally {
                 con.close();
