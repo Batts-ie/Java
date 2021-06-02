@@ -19,8 +19,10 @@ public class Options{
 
         switch (wahl) {
             case 'y':
-                HashMap<String, Integer> wochentage = searcher.searcher(
-                        handler.getLocalDates(request.getFeiertagObject(menu.maxDate(), menu.minDate())));
+                GUI gui = new GUI();
+                HashMap<String, Integer> feiertage = searcher.searcher(handler.getLocalDates(request.getFeiertagObject(menu.maxDate(), menu.minDate())));
+                //DB.Connection();
+                gui.Dia(feiertage);
                 break;
             case 'x':
                 System.out.print("Ich wünsche einen schönen Tag");

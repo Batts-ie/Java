@@ -3,19 +3,18 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
 public class DB{
 
     public static void Connection(){
         String hostname = "localhost";
         String dBPort = "3306";
         String userName = "root";
-        String password = "PASSWORT";
+        String password = "SHW_Destroyer";
 
         Connection conn;
 		 
         try{
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("org.mariadb.jdbc.Driver");
         }
         catch(Exception e)
         {
@@ -23,10 +22,10 @@ public class DB{
             e.printStackTrace();
         }
         try {
-               conn = DriverManager.getConnection("jdbc:mysql://"+hostname+"/"+"?user="+userName+"&password="+password+"&serverTimezone=UTC");
+               conn = DriverManager.getConnection("jdbc:mariadb//"+hostname+":"+dBPort+"/"+"?user="+userName+"&password="+password+"&serverTimezone=UTC");
                Statement statement = conn.createStatement();
-               ResultSet rS=statement.executeQuery("Select * from kalender");
-               System.out.println("Zeit                                 Montag      Dienstag        Mittwoch        Donnerstag      Freitag     Samstag" +
+               ResultSet rS=statement.executeQuery("Select * from tage");
+               System.out.println("Zeit        Montag      Dienstag        Mittwoch        Donnerstag      Freitag     Samstag" +
                        "       Sonntag         Startjahr       Endjahr");
                while(rS.next()){
                    String zeit = rS.getString("Datum");
