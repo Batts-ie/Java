@@ -1,0 +1,26 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - mainApp",
+            "request": "launch",
+            "mainClass": "mainApp",
+            "projectName": "Feiertagesucher"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - GUI",
+            "request": "launch",
+            "mainClass": "GUI",
+            "projectName": "Feiertagesucher"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - GUI",
+            "request": "launch",
+            "vmArgs": "--module-path 'C:\\Users\\Michael Perktold\\Desktop\\Schule\\4AHWII\\SWP Java\\javafx-sdk-15\\lib' --add-modules javafx.controls,javafx.fxml",
+            "mainClass": "GUI",
+            "projectName": "Feiertagssucher"
+        }
+    ]
+}
