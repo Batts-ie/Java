@@ -102,7 +102,7 @@ public class WebRequest
             e.printStackTrace();
         }
     }
-    public void CreateSTM()
+    /*public void CreateSTM()
     {
         String createDatabase = "CREATE DATABASE IF NOT EXISTS "+dbName;
         try {
@@ -115,7 +115,7 @@ public class WebRequest
             System.out.println("Die Datenbank "+dbName+" konnte nicht erstellt werden");
             e.printStackTrace();
         }
-    }
+    }*/
     public static void UseSTM()
     {
         String useDatabase = "USE "+dbName;
@@ -348,7 +348,7 @@ public class WebRequest
     private LocalDate currentdate = LocalDate.of(2010, 1, 1);
     int count = 0;
     boolean bought = false;
-    double money = 100000;
+    double startm = 100000;
 
 
     public void createTradingTable(String symbol){
@@ -384,11 +384,12 @@ public class WebRequest
     // Trading 200er Strategy
     public void insertStartTrade(String symbol, String endung) {
         String sql = "insert into " + symbol + endung +" (currentdate, bought, count, money) values ('?',?,?,?);";
+        System.out.println(sql);
         try {
             con = DriverManager.getConnection("jdbc:mysql://" + hostname + "/" + dbName + "?user=" + userName + "&password=" + password);
             PreparedStatement ptsmt = con.prepareStatement(sql);
             sql = "insert into " + symbol + endung + " (currentdate, bought, count, money) values " +
-                    "(\'" + currentdate.minusDays(1) + "\','" + symbol + "','s',0," + money + ");";
+                    "(\'" + currentdate.minusDays(1) + "\',1,0," + startm + ");";
             ptsmt.execute(sql);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -415,34 +416,31 @@ public class WebRequest
                 rsA.getDouble("AVERAGE");
                 dateTradeList.add(LocalDate.parse(rs.getString("datum")));
                 closeTradeList.add(rs.getDouble("close"));
-                averageTradeList.add(rsA.getDouble("gleitenderDurchschnitt"));
+                averageTradeList.add(rsA.getDouble("average"));
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
     public void trading200(String symbol) throws SQLException {
-        String flag = null;
-        int anzahl = 0;
-        int depot=0;
+        int bought = 0;
+        int count = 0;
+        int money=0;
         String endung = "trading";
         insertStartTrade(symbol,endung);
         System.out.println("Trading with _200");
         for (int i = 0; i < dateTradeList.size(); i++) {
             int rest = 0;
-            flag = null;
-            anzahl = 0;
-            depot = 0;
-            String sqlFlag = "select * from " + symbol + "trade order by datum desc limit 1";
+            String sqlFlag = "select * from " + symbol + endung +" order by currentDate desc limit 1";
             Connection con = null;
             try {
                 con = DriverManager.getConnection("jdbc:mysql://" + hostname + "/" + dbName + "?user=" + userName + "&password=" + password);
                 Statement stmt = con.createStatement();
                 ResultSet rs = stmt.executeQuery(sqlFlag);
                 while (rs.next()) {
-                    flag = rs.getString("flag");
-                    anzahl = rs.getInt("number");
-                    depot = rs.getInt("depot");
+                    bought = rs.getInt("bought");
+                    count = rs.getInt("count");
+                    money = rs.getInt("money");
                 }
             } catch (SQLException ex) {
                 System.out.println(ex.getMessage());
@@ -451,27 +449,27 @@ public class WebRequest
                 con.close();
             }
 
-            if (flag.equals("s")) {
+            if (bought == 1) {
                 if (!dateTradeList.get(i).getDayOfWeek().equals(DayOfWeek.SATURDAY)
                         || (!dateTradeList.get(i).getDayOfWeek().equals(DayOfWeek.SUNDAY))) {
                     if (closeTradeList.get(i) > averageTradeList.get(i)) {
-                        anzahl = (int) (depot / (closeTradeList.get(i)));
-                        rest = (int) (anzahl * closeTradeList.get(i));
-                        depot = (depot - rest);
-                        flag = "b";
+                        count = (int) (money / (closeTradeList.get(i)));
+                        rest = (int) (count * closeTradeList.get(i));
+                        money = (money - rest);
+                        bought = 0;
 
                         insertTradeIntoDB(symbol,(LocalDate) dateTradeList.get(i),bought,endung, count, money);
                         //System.out.println("bought");
                         //System.out.println(anzahl + " number of stocks");
                     }
                 }
-            } else if (flag.equals("b")) {
+            } else if (bought == 0) {
                 if (!dateTradeList.get(i).getDayOfWeek().equals(DayOfWeek.SATURDAY)
                         || (!dateTradeList.get(i).getDayOfWeek().equals(DayOfWeek.SUNDAY))) {
                     if (closeTradeList.get(i) < averageTradeList.get(i)) {
-                        depot = (int) ((anzahl * closeTradeList.get(i)) + depot);
-                        flag = "s";
-                        anzahl = 0;
+                        money = (int) ((count * closeTradeList.get(i)) + money);
+                        bought = 1;
+                        count = 0;
                         insertTradeIntoDB(symbol,(LocalDate) dateTradeList.get(i),bought,endung, count, money);
                         //System.out.println("sold");
                         //System.out.println(depot + " money in depot");
@@ -480,7 +478,7 @@ public class WebRequest
                 if(dateTradeList.get(i) == dateTradeList.get(dateTradeList.size()-1))
                 {
                     double tempClose = arrayListClose.get(dateTradeList.size() - 1);
-                    lastSale(tempClose, flag, depot, anzahl);
+                    lastSale(tempClose, bought, money, count);
                     insertTradeIntoDB(symbol,(LocalDate) dateTradeList.get(i),bought,endung, count, money);
                 }
             }
@@ -491,17 +489,17 @@ public class WebRequest
         }
 
         System.out.println(symbol);
-        depot = (int) (depot - money);
-        System.out.println(depot + " money in depot");
-        System.out.println(((depot/money)*100.00) + " prozentueller Gewinn");
+        money = (int) (money - startm);
+        System.out.println(money + " money in depot");
+        System.out.println(((money/startm)*100.00) + " prozentueller Gewinn");
     }
-    public void insertTradeIntoDB (String symbol,LocalDate dateTrading, boolean bought, String end, int count, double money) throws SQLException
+    public void insertTradeIntoDB (String symbol,LocalDate dateTrading, int bought, String end, int count, double money) throws SQLException
     {
-        String insertFlag = "insert into " + symbol + end +" (datum, bought,  count, money) values ('?',?,?,?,?);";
+        String insertFlag = "insert ignore into " + symbol + end +" (currentDate, bought,  count, money) values ('?',?,?,?,?);";
         try {
             con = DriverManager.getConnection("jdbc:mysql://" + hostname + "/" + dbName + "?user=" + userName + "&password=" + password);
             PreparedStatement ptsmt = con.prepareStatement(insertFlag);
-            insertFlag = "insert into " + symbol + end +" (datum, ticker, flag, number, depot) values " +
+            insertFlag = "insert ignore into " + symbol + end +" (currentDate, bought, count, money) values " +
                     "(\'" + dateTrading + "\','" + bought +"'," + count + "," + money + ");";
             ptsmt.execute(insertFlag);
         } catch (SQLException e) {
@@ -510,18 +508,15 @@ public class WebRequest
     }
     // Buy and Hold Stragedy
     public void buyandHold (String symbol) throws SQLException {
-        String flag = null;
-        int anzahl = 0;
-        int depot = (int) money;
+        int bought = 0;
+        int count = 0;
+        int money = (int) startm;
         String endung = "bh";
         insertStartTrade(symbol,endung);
         System.out.println("Buy and Hold");
         for ( int i = 0; i<dateTradeList.size(); i++) {
             int rest = 0;
-            flag = null;
-            anzahl = 0;
-            depot = 0;
-            String sqlFlag = "select * from " + symbol + "bh order by datum desc limit 1";
+            String sqlFlag = "select * from " + symbol + "bh order by currentDate desc limit 1";
             Connection con = null;
             try {
                 con = DriverManager.getConnection("jdbc:mysql://" + hostname + "/" + dbName + "?user=" + userName + "&password=" + password);
@@ -529,9 +524,9 @@ public class WebRequest
                 ResultSet rs = stmt.executeQuery(sqlFlag);
                 while (rs.next())
                 {
-                    flag = rs.getString("flag");
-                    anzahl = rs.getInt("number");
-                    depot = rs.getInt("depot");
+                    bought = rs.getInt("bought");
+                    count = rs.getInt("count");
+                    money = rs.getInt("money");
                 }
             }
             catch (SQLException ex) {
@@ -541,89 +536,82 @@ public class WebRequest
             }
             if(dateTradeList.get(i) == dateTradeList.get(0))
             {
-                anzahl = (int) (depot / (closeTradeList.get(i)));
-                rest = (int) (anzahl * closeTradeList.get(i));
-                depot = (depot - rest);
-                flag = "b";
+                count = (int) (money / (closeTradeList.get(i)));
+                rest = (int) (count * closeTradeList.get(i));
+                money = (money - rest);
+                bought = 0;
                 insertTradeIntoDB(symbol,(LocalDate) dateTradeList.get(i),bought,endung, count, money);
                 //System.out.println("bought");
                 //System.out.println(anzahl + " number of stocks");
             }
             else if(dateTradeList.get(i) == dateTradeList.get(dateTradeList.size()-1))
             {
-                depot = (int) ((anzahl * closeTradeList.get(i)) + depot);
-                flag = "s";
-                anzahl = 0;
+                money= (int) ((count * closeTradeList.get(i)) + money);
+                bought= 1;
+                count = 0;
                 insertTradeIntoDB(symbol,(LocalDate) dateTradeList.get(i),bought,endung, count, money);
                 //System.out.println("sold");
                 //System.out.println(depot + " money in depot");
             }
         }
         System.out.println(symbol);
-        depot = (int) (depot - money);
-        System.out.println(depot + " money in depot");
-        System.out.println(((depot/money)*100.00) + " prozentueller Gewinn");
+        money = (int) (money - startm);
+        System.out.println(money + " money in depot");
+        System.out.println(((money/startm)*100.00) + " prozentueller Gewinn");
     }
-    /*public void trading200With3(String symbol) throws SQLException {
-        String flag = null;
-        int anzahl = 0;
-        int depot = 0;
+    public void trading200With3(String symbol) throws SQLException {
+        int bought = 0;
+        int count = 0;
+        int money = 0;
         String endung = "trade3";
-        insertStartTrade(endung);
+        insertStartTrade(symbol,endung);
         System.out.println("Trading with _200 plus 3%");
+        Connection con = null;
         for (int i = 0; i < dateTradeList.size(); i++) {
             int rest = 0;
-            flag = null;
-            anzahl = 0;
-            depot = 0;
-            String sqlFlag = "select * from " + stock + "trade3 order by datum desc limit 1";
-            Connection con = null;
+            String sqlFlag = "select * from " + symbol + endung + " order by datum desc limit 1";
+
             try {
                 con = DriverManager.getConnection("jdbc:mysql://" + hostname + "/" + dbName + "?user=" + userName + "&password=" + password);
                 Statement stmt = con.createStatement();
                 ResultSet rs = stmt.executeQuery(sqlFlag);
                 while (rs.next()) {
-                    flag = rs.getString("flag");
-                    anzahl = rs.getInt("number");
-                    depot = rs.getInt("depot");
+                    bought = rs.getInt("bought");
+                    count = rs.getInt("count");
+                    money = rs.getInt("money");
                 }
             } catch (SQLException ex) {
                 System.out.println(ex.getMessage());
             }
-            finally {
-                if(conn != null){
-                    con.close();
-                }
-            }
-            if (flag.equals("s")) {
+            if (bought == 1) {
                 if (!dateTradeList.get(i).getDayOfWeek().equals(DayOfWeek.SATURDAY)
                         || (!dateTradeList.get(i).getDayOfWeek().equals(DayOfWeek.SUNDAY))) {
                     if ((closeTradeList.get(i)*1.03) > averageTradeList.get(i)) {
-                        anzahl = (int) (depot / ((closeTradeList.get(i)*1.03)));
-                        rest = (int) (anzahl * (closeTradeList.get(i)*1.03));
-                        depot = (depot - rest);
-                        flag = "b";
-                        insertTradeIntoDB((LocalDate) dateTradeList.get(i), stock, endung, flag, anzahl, depot);
+                        count = (int) (money / ((closeTradeList.get(i)*1.03)));
+                        rest = (int) (count * (closeTradeList.get(i)*1.03));
+                        money = (money - rest);
+                        bought = 0; // buy
+                        insertTradeIntoDB(symbol,(LocalDate) dateTradeList.get(i), bought, endung, count, money);
                         //System.out.println("bought");
                         //System.out.println(anzahl + " number of stocks");
                     }
                 }
-            } else if (flag.equals("b")) {
+            } else if (bought == 0) { // buy
                 if (!dateTradeList.get(i).getDayOfWeek().equals(DayOfWeek.SATURDAY)
                         || (!dateTradeList.get(i).getDayOfWeek().equals(DayOfWeek.SUNDAY))) {
                     if ((closeTradeList.get(i)*1.03) < averageTradeList.get(i)) {
-                        depot = (int) ((anzahl * (closeTradeList.get(i)*1.03)) + depot);
-                        flag = "s";
-                        anzahl = 0;
-                        insertTradeIntoDB((LocalDate) dateTradeList.get(i),stock, endung, flag, anzahl, depot);
+                        money = (int) ((count * (closeTradeList.get(i)*1.03)) + money);
+                        bought = 1;
+                        count = 0;
+                        insertTradeIntoDB(symbol,(LocalDate) dateTradeList.get(i), bought, endung, count, money);
                         //System.out.println("sold");
                         //System.out.println(depot + " money in depot");
                     }
                 }
                 {
-                    double tempClose = closeValue.get(dateTradeList.size() - 1);
-                    lastSale(tempClose, flag, depot, anzahl);
-                    insertTradeIntoDB((LocalDate) dateTradeList.get(i), stock, endung, flag, anzahl, depot);
+                    double tempClose = arrayListClose.get(dateTradeList.size() - 1);
+                    lastSale(tempClose, bought, money, count);
+                    insertTradeIntoDB(symbol, (LocalDate) dateTradeList.get(i), bought, endung,count, money);
                 }
             }
             else
@@ -631,18 +619,19 @@ public class WebRequest
                 System.out.println("Datenbankfehler");
             }
         }
-        System.out.println(stock);
-        depot = (int) (depot - startKapital);
-        System.out.println(depot + " money in depot");
-        System.out.println(((depot/startKapital)*100.00) + " prozentueller Gewinn");
-    }*/
-    public void lastSale(double core,String flag, int depot, int anzahl)
+        con.close();
+        System.out.println(symbol);
+        money = (int) (money - startm);
+        System.out.println(money + " money in depot");
+        System.out.println(((money/startm)*100.00) + " prozentueller Gewinn");
+    }
+    public void lastSale(double core,int bought, double money, int count)
     {
-        if(flag.equals("b"))
+        if(bought == 0)
         {
-            depot = (int) ((anzahl *core) + depot);
-            flag = "s";
-            anzahl = 0;
+            money = (int) ((count *core) + money);
+            bought = 1;
+            count = 0;
         }
     }
 }

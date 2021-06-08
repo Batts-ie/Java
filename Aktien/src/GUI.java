@@ -38,7 +38,7 @@ public class GUI extends Application{
     public void start(Stage s) throws IOException, JSONException, SQLException {
         /*DB Klasse, WebRequest - Abfrage vom Symbol*/
 
-        wr.CreateSTM();
+        //wr.CreateSTM();
         readFile();
         for(int i = 0; i<stonks.size();i++) {
             String symbol = stonks.get(i);
@@ -48,7 +48,7 @@ public class GUI extends Application{
             /*DB OUTPUT*/
             if (!check(symbol)) {
                 wr.GetCloseValues(symbol);
-                wr.CreateSTM();
+               // wr.CreateSTM();
                 wr.UseSTM();
                 wr.CreateTable(symbol);
                 wr.InsertStatementClose(symbol);
@@ -59,6 +59,7 @@ public class GUI extends Application{
                 wr.SelectAVGStatement(symbol);
                 wr.InsertStatementAvg(symbol);
                 wr.createTradingTable(symbol);
+                wr.fillDateTradeList(symbol);
                 wr.trading200(symbol);
                 wr.buyandHold(symbol);
                 wr.ListNull();
