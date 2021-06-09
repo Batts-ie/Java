@@ -63,6 +63,7 @@ public class GUI extends Application{
                 wr.trading200(symbol);
                 wr.buyandHold(symbol);
                 wr.trading200With3(symbol);
+                //wr.calcTradingAll(symbol);
                 wr.ListNull();
                 wr.selectAll(symbol);
 

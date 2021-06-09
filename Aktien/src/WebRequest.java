@@ -13,6 +13,7 @@ import org.json.*;
 import org.apache.commons.io.IOUtils;
 
 import javax.swing.plaf.nimbus.State;
+import javax.xml.transform.Result;
 
 public class WebRequest
 {
@@ -139,7 +140,7 @@ public class WebRequest
         String createTableavg = "CREATE TABLE IF NOT EXISTS "+symbol+"avg (datum DATE PRIMARY KEY unique, AVERAGE DOUBLE);";
         String dropTableC = "drop table if exists " + symbol+"spcorrected ;";
         String cmdC = "CREATE TABLE IF NOT EXISTS " + symbol + "spcorrected (datum DATE PRIMARY KEY unique , close DOUBLE, CORRECTED DOUBLE);";
-
+        String cmdtrA = "CREATE TABLE IF NOT EXISTS " + symbol + "tradingAll (moneytrading int, moneytrading3p int, moneybh int);";
         try
         {
             con = DriverManager.getConnection("jdbc:mysql://"+hostname+"/"+dbName+"?user="+userName+"&password="+password);
@@ -150,6 +151,7 @@ public class WebRequest
             stm.execute(createTableavg);
             stm.execute(dropTableC);
             stm.execute(cmdC);
+            stm.execute(cmdtrA);
         }
         catch (SQLException e)
         {
@@ -630,5 +632,38 @@ public class WebRequest
         money = (int) (money - startm);
         System.out.println(money + " money in depot");
         System.out.println(((money/startm)*100.00) + " prozentuelle VerÃ¤nderung");
+    }
+    public void calcTradingAll(String symbol){
+        String sqlbh;
+        String sqlt3;
+        String sqltn;
+        String endungbh = "bh";
+        String endung3 = "trade3";
+        String endungt = "trading";
+        String cmdIA;
+        String endungA = "tradingAll";
+        String sumup;
+        try{
+            Connection conn = null;
+            conn =  DriverManager.getConnection("jdbc:mysql://" + hostname + "/" + dbName + "?user=" + userName + "&password=" + password);
+            System.out.println("Sum trading, trading 3% and buyNhold together");
+            sqlbh = "SELECT money FROM " + symbol + endungbh + " ORDER BY currentDate DESC LIMIT 1";
+            sqlt3 = "SELECT money FROM " + symbol + endung3 + " ORDER BY currentDate DESC LIMIT 1";
+            sqltn = "SELECT money FROM " + symbol + endungt + " ORDER BY currentDate DESC LIMIT 1";
+            Statement stm = conn.createStatement();
+            /*stm.execute(sqlbh);
+            stm.execute(sqlt3);
+            stm.execute(sqltn);*/
+            ResultSet rsbh = stm.executeQuery(sqlbh);
+            ResultSet rst3 = stm.executeQuery(sqlt3);
+            ResultSet rstn = stm.executeQuery(sqltn);
+            cmdIA = "INSERT INTO " + symbol + endungA + " VALUES(" + rstn + "," + rst3 + "," + rsbh + ");";
+            stm.execute(cmdIA);
+            sumup = "SELECT SUM(moneytrading), SUM(moneytrading3p), SUM(moneybh) FROM " + symbol + endungA + ";";
+            stm.execute(sumup);
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 }
