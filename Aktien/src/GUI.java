@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Locale;
 import java.util.Scanner;
 
 
@@ -33,11 +34,18 @@ import java.util.Scanner;
 public class GUI extends Application{
     WebRequest wr = new WebRequest();
     ArrayList<String> stonks = new ArrayList<String>();
-
+    Scanner reader = new Scanner(System.in);
     @Override
     public void start(Stage s) throws IOException, JSONException, SQLException {
         /*DB Klasse, WebRequest - Abfrage vom Symbol*/
-
+        /*System.out.println("Welche Strategie soll ermittelt werden: ");
+        System.out.println("a ... trading 200 ");
+        System.out.println("b ... buy and hold ");
+        System.out.println("c ... trading 200 with 3 percent ");
+        System.out.println("Wahl:  ");
+        String art = reader.next().toLowerCase();*/
+        //readFile();
+        //multitrade("a", stonks);
         //wr.CreateSTM();
         readFile();
         for(int i = 0; i<stonks.size();i++) {
@@ -58,6 +66,7 @@ public class GUI extends Application{
                 wr.update(symbol);
                 wr.SelectAVGStatement(symbol);
                 wr.InsertStatementAvg(symbol);
+                wr.tableDropTrading(symbol);
                 wr.createTradingTable(symbol);
                 wr.fillDateTradeList(symbol);
                 wr.trading200(symbol);
@@ -128,6 +137,35 @@ public class GUI extends Application{
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    public void multitrade(String art,ArrayList<String> stonks) throws SQLException {
+        System.out.println("Test");
+        int stsnz = stonks.size();
+        int money= 100000;
+        int finalmoney = 0;
+        for (String stonk:stonks) {
+            WebRequest trader = new WebRequest();
+            trader.startm=money/stsnz;
+            System.out.println(stonk);
+            switch (art){
+                case "a":
+                    trader.tableDropTrading(stonk);
+                    trader.createTradingTable(stonk);
+                    trader.split(stonk);
+                    trader.fillDateTradeList(stonk);
+                    trader.trading200(stonk);
+                    break;
+                case "b":
+                    trader.buyandHold(stonk);
+                    break;
+                case "c":
+                    trader.trading200With3(stonk);
+                    break;
+            }
+
+            finalmoney += trader.finalmoney;
+        }
+
     }
     public static void main(String args[]){
         launch(args);

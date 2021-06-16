@@ -44,6 +44,7 @@ public class WebRequest
     private String dBPort = "3306";
     private static String userName = "root";
     private static String password = "SHW_Destroyer";
+    public int finalmoney = 0;
 
     public JSONObject Request(String urlString)
     {
@@ -134,22 +135,22 @@ public class WebRequest
     }
     public void CreateTable(String symbol)
     {
-        String dropTable = "drop table if exists " + symbol;
+        //String dropTable = "drop table if exists " + symbol;
         String createTable = "CREATE TABLE IF NOT EXISTS "+symbol+" (datum DATE PRIMARY KEY unique, close DOUBLE);";
-        String dropTableavg = "drop table if exists " + symbol+"avg ;";
+        //String dropTableavg = "drop table if exists " + symbol+"avg ;";
         String createTableavg = "CREATE TABLE IF NOT EXISTS "+symbol+"avg (datum DATE PRIMARY KEY unique, AVERAGE DOUBLE);";
-        String dropTableC = "drop table if exists " + symbol+"spcorrected ;";
+        //String dropTableC = "drop table if exists " + symbol+"spcorrected ;";
         String cmdC = "CREATE TABLE IF NOT EXISTS " + symbol + "spcorrected (datum DATE PRIMARY KEY unique , close DOUBLE, CORRECTED DOUBLE);";
         String cmdtrA = "CREATE TABLE IF NOT EXISTS " + symbol + "tradingAll (moneytrading int, moneytrading3p int, moneybh int);";
         try
         {
             con = DriverManager.getConnection("jdbc:mysql://"+hostname+"/"+dbName+"?user="+userName+"&password="+password);
             Statement stm = con.createStatement();
-            stm.execute(dropTable);
+            //stm.execute(dropTable);
             stm.execute(createTable);
-            stm.execute(dropTableavg);
+            //stm.execute(dropTableavg);
             stm.execute(createTableavg);
-            stm.execute(dropTableC);
+            //stm.execute(dropTableC);
             stm.execute(cmdC);
             stm.execute(cmdtrA);
         }
@@ -161,12 +162,12 @@ public class WebRequest
     }
     public void InsertStatementClose(String symbol)
     {
-        String sql = "insert into " + symbol + " (datum, close ) VALUES('?', ?);";
+        String sql = "insert ignore into " + symbol + " (datum, close ) VALUES('?', ?);";
         try {
             Connection conn = DriverManager.getConnection("jdbc:mysql://" + hostname + "/" + dbName + "?user=" + userName + "&password=" + password);
             PreparedStatement pstmt = conn.prepareStatement(sql);
             for (int i = 0; i < arrayListDate.size(); i++) {
-                sql = "insert into " + symbol + " (datum , close) VALUES(\""+ arrayListDate.get(i).toString()+"\","+ arrayListClose.get(i)+");";
+                sql = "insert ignore into " + symbol + " (datum , close) VALUES(\""+ arrayListDate.get(i).toString()+"\","+ arrayListClose.get(i)+");";
                 pstmt.execute(sql);
             }
         } catch (SQLException e) {
@@ -207,7 +208,7 @@ public class WebRequest
             Statement stm = con.createStatement();
             for(int i = 0; i<arrayListAVG.size();i++)
             {
-                insertInTableAVG = "insert into " +symbol+ "avg (datum, AVERAGE) values (\"" + arrayListDate.get(i).toString() + "\"," + arrayListAVG.get(i) + ");";
+                insertInTableAVG = "insert ignore into " +symbol+ "avg (datum, AVERAGE) values (\"" + arrayListDate.get(i).toString() + "\"," + arrayListAVG.get(i) + ");";
                 stm.execute(insertInTableAVG);
             }
         }
@@ -299,7 +300,7 @@ public class WebRequest
             con = DriverManager.getConnection("jdbc:mysql://" + hostname + "/" + dbName + "?user=" + userName + "&password=" + password);
             PreparedStatement pstm = con.prepareStatement(sqlI);
             for(int i = 0; i < splitList.size(); i++){
-                sqlI = "insert into "+ symbol + "spcorrected (datum, close, CORRECTED) VALUES(\""+ arrayListDate.get(i).toString() + "\"," +
+                sqlI = "insert ignore into "+ symbol + "spcorrected (datum, close, CORRECTED) VALUES(\""+ arrayListDate.get(i).toString() + "\"," +
                         arrayListClose.get(i) + "," + splitList.get(i) + ");";
                 pstm.execute(sqlI);
             }
@@ -496,6 +497,7 @@ public class WebRequest
         System.out.println(symbol);
         money = (int) (money - startm);
         System.out.println(money + " money in depot");
+        finalmoney=money;
         System.out.println(((money/startm)*100.00) + " prozentueller Gewinn");
     }
     public void insertTradeIntoDB (String symbol,LocalDate dateTrading, int bought, String end, int count, double money) throws SQLException
@@ -640,7 +642,6 @@ public class WebRequest
         String endungbh = "bh";
         String endung3 = "trade3";
         String endungt = "trading";
-        String cmdIA;
         String endungA = "tradingAll";
         String sumup;
         try{
@@ -657,12 +658,58 @@ public class WebRequest
             ResultSet rsbh = stm.executeQuery(sqlbh);
             ResultSet rst3 = stm.executeQuery(sqlt3);
             ResultSet rstn = stm.executeQuery(sqltn);
-            cmdIA = "INSERT INTO " + symbol + endungA + " VALUES(" + rstn + "," + rst3 + "," + rsbh + ");";
-            stm.execute(cmdIA);
-            sumup = "SELECT SUM(moneytrading), SUM(moneytrading3p), SUM(moneybh) FROM " + symbol + endungA + ";";
-            stm.execute(sumup);
-
+            InsertTradingAll(symbol, endungA, rstn, rst3, rsbh);
+            SumUP(symbol, endungA);
+            conn.close();
         }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+        public void InsertTradingAll(String symbol, String endungA, ResultSet rstn, ResultSet rst3, ResultSet rsbh){
+        String cmdI;
+        try{
+            Connection conn = null;
+            conn = DriverManager.getConnection("jdbc:mysql://" + hostname + "/" + dbName + "?user=" + userName + "&password=" + password);
+            cmdI = "INSERT IGNORE INTO " + symbol + endungA + " VALUES(" + rstn + "," + rst3 + "," + rsbh + ");";
+            Statement stm = conn.createStatement();
+            stm.execute(cmdI);
+            conn.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public void SumUP(String symbol, String endungA){
+        String cmdI;
+        try{
+            Connection conn = null;
+            conn = DriverManager.getConnection("jdbc:mysql://" + hostname + "/" + dbName + "?user=" + userName + "&password=" + password);
+            cmdI = "SELECT SUM(moneytrading + moneytrading3p + moneybh) FROM " + symbol + endungA + ";";
+            Statement stm = conn.createStatement();
+            stm.execute(cmdI);
+            conn.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public void tableDropTrading(String symbol){
+        String dropt;
+        String drop3p;
+        String dropbh;
+        String endungbh = "bh";
+        String endung3 = "trade3";
+        String endungt = "trading";
+
+        try{
+            Connection conn = null;
+            conn =  DriverManager.getConnection("jdbc:mysql://" + hostname + "/" + dbName + "?user=" + userName + "&password=" + password);
+            dropbh = "DROP TABLE IF EXISTS " + symbol + endungbh + ";";
+            drop3p = "DROP TABLE IF EXISTS " + symbol + endung3 + ";";
+            dropt = "DROP TABLE IF EXISTS " + symbol + endungt + ";";
+            Statement stm = conn.createStatement();
+            stm.execute(drop3p);
+            stm.execute(dropbh);
+            stm.execute(dropt);
+        }catch (Exception e){
             e.printStackTrace();
         }
     }
