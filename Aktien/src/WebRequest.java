@@ -652,9 +652,6 @@ public class WebRequest
             sqlt3 = "SELECT money FROM " + symbol + endung3 + " ORDER BY currentDate DESC LIMIT 1";
             sqltn = "SELECT money FROM " + symbol + endungt + " ORDER BY currentDate DESC LIMIT 1";
             Statement stm = conn.createStatement();
-            /*stm.execute(sqlbh);
-            stm.execute(sqlt3);
-            stm.execute(sqltn);*/
             ResultSet rsbh = stm.executeQuery(sqlbh);
             ResultSet rst3 = stm.executeQuery(sqlt3);
             ResultSet rstn = stm.executeQuery(sqltn);
