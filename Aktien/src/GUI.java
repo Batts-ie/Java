@@ -43,10 +43,9 @@ public class GUI extends Application{
         System.out.println("b ... buy and hold ");
         System.out.println("c ... trading 200 with 3 percent ");
         System.out.println("Wahl:  ");
-        String art = reader.next().toLowerCase();*/
-        //readFile();
-        //multitrade("a", stonks);
-        //wr.CreateSTM();
+        String art = reader.next().toLowerCase();
+        readFile();
+        multitrade("a", stonks);*/
         readFile();
         for(int i = 0; i<stonks.size();i++) {
             String symbol = stonks.get(i);
