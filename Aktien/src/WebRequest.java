@@ -477,7 +477,7 @@ public class WebRequest
                         //System.out.println(depot + " money in depot");
                     }
                     if (dateTradeList.get(i) == dateTradeList.get(dateTradeList.size() - 1)) {
-                        double tempClose = arrayListClose.get(dateTradeList.size() - 1);
+                        double tempClose = closeTradeList.get(dateTradeList.size() - 1);
                         if (bought == 0) {
                             money = (int) ((count * tempClose) + money);
                             bought = 1;
