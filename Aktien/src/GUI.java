@@ -38,14 +38,14 @@ public class GUI extends Application{
     @Override
     public void start(Stage s) throws IOException, JSONException, SQLException {
         /*DB Klasse, WebRequest - Abfrage vom Symbol*/
-        /*System.out.println("Welche Strategie soll ermittelt werden: ");
+        System.out.println("Welche Strategie soll ermittelt werden: ");
         System.out.println("a ... trading 200 ");
         System.out.println("b ... buy and hold ");
         System.out.println("c ... trading 200 with 3 percent ");
         System.out.println("Wahl:  ");
         String art = reader.next().toLowerCase();
         readFile();
-        multitrade("a", stonks);*/
+        multitrade(art, stonks);
         readFile();
         for(int i = 0; i<stonks.size();i++) {
             String symbol = stonks.get(i);
@@ -155,15 +155,25 @@ public class GUI extends Application{
                     trader.trading200(stonk);
                     break;
                 case "b":
+                    trader.tableDropTrading(stonk);
+                    trader.createTradingTable(stonk);
+                    trader.split(stonk);
+                    trader.fillDateTradeList(stonk);
                     trader.buyandHold(stonk);
                     break;
                 case "c":
+                    trader.tableDropTrading(stonk);
+                    trader.createTradingTable(stonk);
+                    trader.split(stonk);
+                    trader.fillDateTradeList(stonk);
                     trader.trading200With3(stonk);
                     break;
             }
 
             finalmoney += trader.finalmoney;
+
         }
+        System.exit(0);
 
     }
     public static void main(String args[]){

@@ -472,19 +472,18 @@ public class WebRequest
                         money = (int) ((count * closeTradeList.get(i)) + money);
                         bought = 1;
                         count = 0;
-                        insertTradeIntoDB(symbol,(LocalDate) dateTradeList.get(i),bought,endung, count, money);
+                        insertTradeIntoDB(symbol, (LocalDate) dateTradeList.get(i), bought, endung, count, money);
                         //System.out.println("sold");
                         //System.out.println(depot + " money in depot");
                     }
-                }
-                if(dateTradeList.get(i) == dateTradeList.get(dateTradeList.size()-1))
-                {
-                    double tempClose = arrayListClose.get(dateTradeList.size() - 1);
-                    if(bought == 0) {
-                        money = (int) ((count * tempClose) + money);
-                        bought = 1;
-                        count = 0;
-                        insertTradeIntoDB(symbol, (LocalDate) dateTradeList.get(i), bought, endung, count, money);
+                    if (dateTradeList.get(i) == dateTradeList.get(dateTradeList.size() - 1)) {
+                        double tempClose = arrayListClose.get(dateTradeList.size() - 1);
+                        if (bought == 0) {
+                            money = (int) ((count * tempClose) + money);
+                            bought = 1;
+                            count = 0;
+                            insertTradeIntoDB(symbol, (LocalDate) dateTradeList.get(i), bought, endung, count, money);
+                        }
                     }
                 }
             }
@@ -495,7 +494,7 @@ public class WebRequest
         }
         con.close();
         System.out.println(symbol);
-        money = (int) (money - startm);
+        //money = (int) (money - startm);
         System.out.println(money + " money in depot");
         finalmoney=money;
         System.out.println(((money/startm)*100.00) + " prozentueller Gewinn");
@@ -563,7 +562,7 @@ public class WebRequest
             }
         }
         System.out.println(symbol);
-        money = (int) (money - startm);
+        //money = (int) (money - startm);
         System.out.println(money + " money in depot");
         System.out.println(((money/startm)*100.00) + " prozentueller Gewinn");
     }
@@ -631,7 +630,7 @@ public class WebRequest
         }
         conn.close();
         System.out.println(symbol);
-        money = (int) (money - startm);
+        //money = (int) (money - startm);
         System.out.println(money + " money in depot");
         System.out.println(((money/startm)*100.00) + " prozentuelle VerÃ¤nderung");
     }
