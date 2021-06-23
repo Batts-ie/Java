@@ -169,7 +169,7 @@ public class GUI extends Application{
                     trader.fillDateTradeList(stonk);
                     trader.trading200With3(stonk);
                     break;
-                /*case "d":
+                case "d":
                     trader.tableDropTrading(stonk);
                     trader.createTradingTable(stonk);
                     trader.split(stonk);
@@ -177,14 +177,15 @@ public class GUI extends Application{
                     trader.trading200(stonk);
                     trader.buyandHold(stonk);
                     trader.trading200With3(stonk);
-                    break;*/
+                    break;
             }
 
             finalmoney += trader.finalmoney;
             percentagewin += trader.percentagewin;
 
         }
-        System.out.println("\nEndgeld: " + finalmoney + "€" + " | prozentueller Gewinn: " + percentagewin + "%");
+        System.out.println("\nim Depot: " + finalmoney + "€" + " | prozentueller Gewinn: " + Math.round(percentagewin)
+                + "% von " + money/stsnz + "€");
         System.exit(0);
 
     }
