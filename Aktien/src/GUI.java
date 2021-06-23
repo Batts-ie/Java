@@ -138,10 +138,11 @@ public class GUI extends Application{
         }
     }
     public void multitrade(String art,ArrayList<String> stonks) throws SQLException {
-        System.out.println("Test");
+        //System.out.println("Test");
         int stsnz = stonks.size();
         int money= 100000;
         int finalmoney = 0;
+        double percentagewin = 0;
         for (String stonk:stonks) {
             WebRequest trader = new WebRequest();
             trader.startm=money/stsnz;
@@ -168,11 +169,22 @@ public class GUI extends Application{
                     trader.fillDateTradeList(stonk);
                     trader.trading200With3(stonk);
                     break;
+                /*case "d":
+                    trader.tableDropTrading(stonk);
+                    trader.createTradingTable(stonk);
+                    trader.split(stonk);
+                    trader.fillDateTradeList(stonk);
+                    trader.trading200(stonk);
+                    trader.buyandHold(stonk);
+                    trader.trading200With3(stonk);
+                    break;*/
             }
 
             finalmoney += trader.finalmoney;
+            percentagewin += trader.percentagewin;
 
         }
+        System.out.println("\nEndgeld: " + finalmoney + "€" + " | prozentueller Gewinn: " + percentagewin + "%");
         System.exit(0);
 
     }

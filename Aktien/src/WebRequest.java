@@ -45,6 +45,7 @@ public class WebRequest
     private static String userName = "root";
     private static String password = "SHW_Destroyer";
     public int finalmoney = 0;
+    public double percentagewin = 0;
 
     public JSONObject Request(String urlString)
     {
@@ -498,6 +499,7 @@ public class WebRequest
         System.out.println(money + " money in depot");
         finalmoney=money;
         System.out.println(((money/startm)*100.00) + " prozentueller Gewinn");
+        percentagewin = (money/startm)*100;
     }
     public void insertTradeIntoDB (String symbol,LocalDate dateTrading, int bought, String end, int count, double money) throws SQLException
     {
@@ -561,10 +563,13 @@ public class WebRequest
                 //System.out.println(depot + " money in depot");
             }
         }
+        con.close();
         System.out.println(symbol);
         //money = (int) (money - startm);
         System.out.println(money + " money in depot");
         System.out.println(((money/startm)*100.00) + " prozentueller Gewinn");
+        finalmoney = money;
+        percentagewin = (money/startm)*100;
     }
     public void trading200With3(String symbol) throws SQLException {
         int bought = 0;
@@ -633,6 +638,8 @@ public class WebRequest
         //money = (int) (money - startm);
         System.out.println(money + " money in depot");
         System.out.println(((money/startm)*100.00) + " prozentuelle VerÃ¤nderung");
+        finalmoney = money;
+        percentagewin = (money/startm)*100;
     }
     public void calcTradingAll(String symbol){
         String sqlbh;
